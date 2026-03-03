@@ -13,6 +13,24 @@ def get_users(db: Session = Depends(get_db), current_user: models.User = Depends
     # Reguläre Nutzer sehen nur sich selbst
     return [current_user]
 
+@router.put("/me/profil", response_model=schemas.UserOut)
+def update_own_profile(update_data: schemas.UserProfileUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    """Eigenes Profil (Vorname, Nachname, Schulungsnachweis) ändern."""
+    current_user.vorname = update_data.vorname
+    current_user.nachname = update_data.nachname
+    current_user.hat_schulungsnachweis = update_data.hat_schulungsnachweis
+    current_user.hat_flugordnung_bestaetigt = update_data.hat_flugordnung_bestaetigt
+    db.commit()
+    db.refresh(current_user)
+    return current_user
+
+@router.put("/me/passwort", status_code=status.HTTP_200_OK)
+def update_own_password(update_data: schemas.UserPasswordUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    """Eigenes Passwort ändern."""
+    current_user.passwort_hash = auth.get_password_hash(update_data.passwort)
+    db.commit()
+    return {"message": "Passwort erfolgreich geändert"}
+
 @router.post("", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
     if current_user.rolle != models.UserRole.admin:

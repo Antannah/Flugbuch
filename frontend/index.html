@@ -51,21 +51,70 @@
                     <i class="fa-solid fa-plane"></i>
                     <span>Flugbuch</span>
                 </div>
-                <div class="actions">
-                    <button id="btn-export-csv" class="btn btn-secondary btn-icon hidden" title="Export als CSV"><i
-                            class="fa-solid fa-file-csv"></i></button>
-                    <button id="btn-export-pdf" class="btn btn-secondary btn-icon hidden" title="Export als PDF"><i
-                            class="fa-solid fa-file-pdf"></i></button>
-                    <button id="btn-manage-models" class="btn btn-primary">
-                        <i class="fa-solid fa-plane-departure"></i> Modelle
-                    </button>
-                </div>
+
                 <div class="nav-user">
                     <button id="btn-admin-users" class="btn-icon hidden" title="Benutzerverwaltung (Admin)"><i
                             class="fa-solid fa-users"></i></button>
                     <button id="btn-admin-settings" class="btn-icon hidden" title="Einstellungen (Admin)"><i
                             class="fa-solid fa-gear"></i></button>
-                    <span id="nav-user-name" style="margin-left: 0.5rem; margin-right: 0.5rem;">Pilot</span>
+                    <div class="profile-dropdown">
+                        <button id="btn-profile-trigger" class="btn-profile-trigger" title="Profil">
+                            <span id="nav-user-name">Pilot</span>
+                            <i class="fa-solid fa-chevron-down" style="font-size:0.6rem; margin-left:0.2rem;"></i>
+                        </button>
+                        <div id="profile-menu" class="profile-menu hidden">
+                            <div class="profile-menu-section">
+                                <h4><i class="fa-solid fa-user-pen"></i> Profil bearbeiten</h4>
+                                <div class="profile-field">
+                                    <input type="text" id="profile-vorname" placeholder="Vorname" class="profile-input">
+                                </div>
+                                <div class="profile-field">
+                                    <input type="text" id="profile-nachname" placeholder="Nachname"
+                                        class="profile-input">
+                                </div>
+                                <button id="btn-save-profile" class="btn btn-primary btn-block"
+                                    style="padding:0.5rem;font-size:0.85rem;">
+                                    <i class="fa-solid fa-save"></i> Speichern
+                                </button>
+                            </div>
+                            <hr style="border-color:var(--surface-border); margin:0.5rem 0;">
+                            <div class="profile-menu-section">
+                                <h4><i class="fa-solid fa-graduation-cap"></i> Schulungsnachweis</h4>
+                                <div style="display:flex; align-items:center; gap:0.75rem;">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="profile-schulung">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Nachweis
+                                        vorhanden</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:0.75rem; margin-top:0.5rem;">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="profile-flugordnung">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Flugordnung
+                                        bestätigt</span>
+                                </div>
+                            </div>
+                            <hr style="border-color:var(--surface-border); margin:0.5rem 0;">
+                            <div class="profile-menu-section">
+                                <h4><i class="fa-solid fa-key"></i> Passwort ändern</h4>
+                                <div class="profile-field">
+                                    <input type="password" id="profile-new-password" placeholder="Neues Passwort"
+                                        class="profile-input">
+                                </div>
+                                <div class="profile-field">
+                                    <input type="password" id="profile-confirm-password"
+                                        placeholder="Passwort bestätigen" class="profile-input">
+                                </div>
+                                <button id="btn-save-password" class="btn btn-secondary btn-block"
+                                    style="padding:0.5rem;font-size:0.85rem;">
+                                    <i class="fa-solid fa-key"></i> Passwort ändern
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <button id="btn-logout" class="btn-icon" title="Abmelden"><i
                             class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
@@ -73,7 +122,7 @@
 
             <main class="dashboard-content">
                 <header class="dashboard-header">
-                    <div class="date-selector glass-panel">
+                    <div class="date-selector glass-panel" style="display: none;">
                         <i class="fa-regular fa-calendar-days"></i>
                         <input type="date" id="current-date" class="date-input">
                     </div>
@@ -121,19 +170,57 @@
                                 </div>
                             </div>
 
-                            <div class="legal-checkbox">
-                                <label>
-                                    <input type="checkbox" id="legal-confirm" required checked>
-                                    <span class="custom-checkbox"></span>
-                                    <span>Ich bestätige die Geltung der StRfF und der Flugordnung der MFG Kitzingen
-                                        e.V.</span>
-                                </label>
-                            </div>
-
                             <button type="submit" class="btn btn-success btn-large btn-block" id="btn-start-flight">
                                 <i class="fa-solid fa-play"></i> Jetzt Starten
                             </button>
                         </form>
+
+                        <button type="button" id="btn-toggle-nachmelden" class="btn btn-secondary btn-block"
+                            style="margin-top:0.75rem;">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Zeit nachmelden
+                        </button>
+
+                        <div id="nachmelden-form" class="hidden"
+                            style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--surface-border);">
+                            <h3 style="font-size:0.95rem; margin-bottom:0.75rem; color:var(--text-secondary);"><i
+                                    class="fa-solid fa-clock-rotate-left"></i> Nachträglicher Eintrag</h3>
+                            <form id="retroactive-flight-form"
+                                style="display:flex; flex-direction:column; gap:0.75rem;">
+                                <div class="input-group">
+                                    <label
+                                        style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Datum</label>
+                                    <input type="date" id="retro-datum" required class="input"
+                                        style="padding:0.6rem 0.75rem;">
+                                </div>
+                                <div style="display:flex; gap:0.75rem;">
+                                    <div class="input-group" style="flex:1;">
+                                        <label
+                                            style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Startzeit</label>
+                                        <input type="time" id="retro-startzeit" required class="input"
+                                            style="padding:0.6rem 0.75rem;">
+                                    </div>
+                                    <div class="input-group" style="flex:1;">
+                                        <label
+                                            style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Endzeit</label>
+                                        <input type="time" id="retro-endzeit" required class="input"
+                                            style="padding:0.6rem 0.75rem;">
+                                    </div>
+                                </div>
+                                <div class="input-group" id="retro-model-select-group">
+                                    <div style="position: relative;">
+                                        <i class="fa-solid fa-jet-fighter"
+                                            style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--text-secondary);"></i>
+                                        <select id="retro-flight-modell" required
+                                            style="width:100%; padding:0.8rem 1rem 0.8rem 2.5rem; background:rgba(15,23,42,0.6); border:1px solid var(--surface-border); border-radius:8px; color:var(--text-primary); cursor:pointer;">
+                                            <option value="" disabled selected>Modell auswählen...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    <i class="fa-solid fa-save"></i> Eintrag speichern
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </section>
 
@@ -173,7 +260,7 @@
             </div>
         </nav>
 
-        <main class="dashboard-content">
+        <main class="dashboard-content" style="max-width: 600px; margin: 0 auto;">
             <section class="glass-card new-model-card">
                 <h2>Neues Modell anlegen</h2>
                 <form id="new-model-form">
@@ -217,7 +304,7 @@
                         </select>
                     </div>
                     <div class="input-group">
-                        <input type="text" id="model-frequenz" placeholder="Kanal / Funkfrequenz (z.B. 2.4 GHz)"
+                        <input type="text" id="model-frequenz" placeholder="Kanal / Funkfrequenz" value="2.4 GHz"
                             required>
                     </div>
                     <div class="input-group">
@@ -252,7 +339,7 @@
             </div>
         </nav>
 
-        <main class="dashboard-content">
+        <main class="dashboard-content" style="max-width: 600px; margin: 0 auto;">
             <section class="add-user-section glass-panel" style="margin-bottom: 2rem;">
                 <h2>Neuen Benutzer anlegen</h2>
                 <form id="new-user-form" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
@@ -265,20 +352,18 @@
                     <div class="input-group">
                         <input type="email" id="new-user-email" placeholder="E-Mail Adresse" required class="input">
                     </div>
-                    <div style="display: flex; gap: 1rem;">
+                    <div class="input-group">
                         <input type="password" id="new-user-password" placeholder="Passwort (Initial)" required
-                            style="flex: 1;" class="input-group input">
-                        <select id="new-user-role" required style="flex: 1;" class="input-group input select-input">
-                            <option value="pilot" selected>Pilot</option>
-                            <option value="flugleiter">Flugleiter</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                            class="input">
                     </div>
                     <div class="form-group"
-                        style="flex-direction: row; align-items: start; gap: 0.5rem; margin-top: 0.5rem;">
-                        <input type="checkbox" id="new-user-schulung" style="margin-top:0.3rem;">
-                        <label for="new-user-schulung" style="font-weight:normal; font-size:0.9rem;">
-                            Schulungsnachweis vorhanden
+                        style="flex-direction: row; align-items: center; gap: 0.75rem; margin-top: 0.25rem;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="new-user-admin">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <label for="new-user-admin" style="font-weight:normal; font-size:0.9rem; cursor:pointer;">
+                            Admin-Rechte vergeben
                         </label>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">

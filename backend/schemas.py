@@ -55,6 +55,7 @@ class UserBase(BaseModel):
     nachname: str
     email: EmailStr
     hat_schulungsnachweis: bool = False
+    hat_flugordnung_bestaetigt: bool = False
     ist_gast: bool = False
 
 class UserCreate(UserBase):
@@ -71,6 +72,12 @@ class UserRoleUpdate(BaseModel):
 
 class UserPasswordUpdate(BaseModel):
     passwort: str
+
+class UserProfileUpdate(BaseModel):
+    vorname: str
+    nachname: str
+    hat_schulungsnachweis: bool = False
+    hat_flugordnung_bestaetigt: bool = False
 
 class UserOut(UserBase):
     id: str

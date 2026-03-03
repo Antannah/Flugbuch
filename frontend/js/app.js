@@ -34,13 +34,13 @@ class FlugbuchApp {
         this.flightModellSelect = document.getElementById('flight-modell');
         this.flightListEl = document.getElementById('flight-list');
         this.activeFlightsCountEl = document.getElementById('active-flights-count');
-        this.legalConfirm = document.getElementById('legal-confirm');
 
         // View Management
         this.dashboardView = document.getElementById('view-dashboard');
         this.modelsView = document.getElementById('view-models');
         this.btnManageModels = document.getElementById('btn-manage-models');
         this.btnBackDashboard = document.getElementById('btn-back-dashboard');
+        this.editingModelId = null; // Track if we're editing a model
 
         // Model View UI
         this.newModelForm = document.getElementById('new-model-form');
@@ -55,6 +55,8 @@ class FlugbuchApp {
         this.usersCountEl = document.getElementById('users-count');
         this.btnExportCsv = document.getElementById('btn-export-csv');
         this.btnExportPdf = document.getElementById('btn-export-pdf');
+        this.btnExportCsvBottom = document.querySelectorAll('#btn-export-csv')[0];
+        this.btnExportPdfBottom = document.querySelectorAll('#btn-export-pdf')[0];
         this.newUserForm = document.getElementById('new-user-form');
 
         // Settings UI
@@ -64,6 +66,10 @@ class FlugbuchApp {
         this.settingsForm = document.getElementById('settings-form');
         this.settingsNameInput = document.getElementById('settings-flugplatz-name');
         this.settingsAddrInput = document.getElementById('settings-adresse');
+
+        // Profile dropdown
+        this.profileTrigger = document.getElementById('btn-profile-trigger');
+        this.profileMenu = document.getElementById('profile-menu');
 
         this.setupEventListeners();
 
@@ -143,7 +149,7 @@ class FlugbuchApp {
         }
 
         if (this.newModelForm) {
-            this.newModelForm.addEventListener('submit', (e) => this.handleNewModel(e));
+            this.newModelForm.addEventListener('submit', (e) => this.handleSaveModel(e));
         }
 
         if (this.newUserForm) {
@@ -168,6 +174,56 @@ class FlugbuchApp {
         if (this.settingsForm) {
             this.settingsForm.addEventListener('submit', (e) => this.handleSaveSettings(e));
         }
+
+        // Nachmelden toggle
+        const btnNachmelden = document.getElementById('btn-toggle-nachmelden');
+        if (btnNachmelden) {
+            btnNachmelden.addEventListener('click', () => {
+                const form = document.getElementById('nachmelden-form');
+                form.classList.toggle('hidden');
+                if (!form.classList.contains('hidden')) {
+                    document.getElementById('retro-datum').value = new Date().toISOString().split('T')[0];
+                }
+            });
+        }
+
+        const retroForm = document.getElementById('retroactive-flight-form');
+        if (retroForm) {
+            retroForm.addEventListener('submit', (e) => this.handleRetroactiveFlight(e));
+        }
+
+        // Profile dropdown
+        if (this.profileTrigger) {
+            this.profileTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.profileMenu.classList.toggle('hidden');
+                if (!this.profileMenu.classList.contains('hidden')) {
+                    document.getElementById('profile-vorname').value = this.currentUser.vorname;
+                    document.getElementById('profile-nachname').value = this.currentUser.nachname;
+                    document.getElementById('profile-schulung').checked = this.currentUser.hat_schulungsnachweis || false;
+                    document.getElementById('profile-flugordnung').checked = this.currentUser.hat_flugordnung_bestaetigt || false;
+                }
+            });
+        }
+
+        // Close profile menu on outside click
+        document.addEventListener('click', (e) => {
+            if (this.profileMenu && !this.profileMenu.classList.contains('hidden')) {
+                if (!e.target.closest('.profile-dropdown')) {
+                    this.profileMenu.classList.add('hidden');
+                }
+            }
+        });
+
+        const btnSaveProfile = document.getElementById('btn-save-profile');
+        if (btnSaveProfile) {
+            btnSaveProfile.addEventListener('click', () => this.handleSaveProfile());
+        }
+
+        const btnSavePassword = document.getElementById('btn-save-password');
+        if (btnSavePassword) {
+            btnSavePassword.addEventListener('click', () => this.handleSavePassword());
+        }
     }
 
     async initDashboard(user) {
@@ -186,15 +242,11 @@ class FlugbuchApp {
             else this.btnAdminSettings.classList.add('hidden');
         }
 
-        // Show export buttons only for admins
-        if (this.btnExportCsv) {
-            if (isAdmin) this.btnExportCsv.classList.remove('hidden');
-            else this.btnExportCsv.classList.add('hidden');
-        }
-        if (this.btnExportPdf) {
-            if (isAdmin) this.btnExportPdf.classList.remove('hidden');
-            else this.btnExportPdf.classList.add('hidden');
-        }
+        // Show export buttons only for admins (bottom buttons)
+        document.querySelectorAll('#btn-export-csv, #btn-export-pdf').forEach(btn => {
+            if (isAdmin) btn.classList.remove('hidden');
+            else btn.classList.add('hidden');
+        });
 
         try {
             // Load Dropdowns
@@ -236,6 +288,18 @@ class FlugbuchApp {
             opt.textContent = `${m.bezeichnung} (${m.gewichtsklasse})`;
             this.flightModellSelect.appendChild(opt);
         });
+
+        // Also populate retro model dropdown
+        const retroSelect = document.getElementById('retro-flight-modell');
+        if (retroSelect) {
+            retroSelect.innerHTML = '<option value="" disabled selected>Modell auswählen...</option>';
+            list.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.id;
+                opt.textContent = `${m.bezeichnung} (${m.gewichtsklasse})`;
+                retroSelect.appendChild(opt);
+            });
+        }
     }
 
     async loadFlugbuch() {
@@ -320,12 +384,14 @@ class FlugbuchApp {
         const typeRadios = document.querySelector('input[name="flight_type"]:checked').value;
         const isFlugleiter = typeRadios === 'flugleiter';
 
+        const today = new Date().toISOString().split('T')[0];
+
         const payload = {
-            datum: this.currentDate.value,
+            datum: today,
             startzeit: new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
             gelaende_id: this.currentGelaende.value,
             ist_flugleiter: isFlugleiter,
-            hat_flugordnung_bestaetigt: this.legalConfirm.checked
+            hat_flugordnung_bestaetigt: this.currentUser.hat_flugordnung_bestaetigt || false
         };
 
         if (!isFlugleiter) {
@@ -341,7 +407,6 @@ class FlugbuchApp {
 
             // Reset form
             this.flightModellSelect.selectedIndex = 0;
-            this.legalConfirm.checked = true; // Keep it checked by default
 
             // Reload list
             this.loadFlugbuch();
@@ -364,7 +429,48 @@ class FlugbuchApp {
         }
     }
 
-    async handleNewModel(e) {
+    async handleRetroactiveFlight(e) {
+        e.preventDefault();
+        const datum = document.getElementById('retro-datum').value;
+        const startzeit = document.getElementById('retro-startzeit').value + ':00';
+        const endzeit = document.getElementById('retro-endzeit').value + ':00';
+        const modellId = document.getElementById('retro-flight-modell').value;
+
+        if (!datum || !startzeit || !endzeit || !modellId) {
+            window.AppUtils.showToast('Bitte alle Felder ausfüllen', 'error');
+            return;
+        }
+
+        const payload = {
+            datum,
+            startzeit,
+            gelaende_id: this.currentGelaende.value,
+            ist_flugleiter: false,
+            hat_flugordnung_bestaetigt: this.currentUser.hat_flugordnung_bestaetigt || false,
+            modell_id: modellId
+        };
+
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+
+        try {
+            const result = await api.startFlight(payload);
+            await api.stopFlight(result.id, endzeit);
+            window.AppUtils.showToast('Nachträglicher Eintrag gespeichert', 'success');
+
+            document.getElementById('retro-startzeit').value = '';
+            document.getElementById('retro-endzeit').value = '';
+            document.getElementById('retro-flight-modell').selectedIndex = 0;
+            document.getElementById('nachmelden-form').classList.add('hidden');
+            this.loadFlugbuch();
+        } catch (error) {
+            window.AppUtils.showToast(error.message, 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async handleSaveModel(e) {
         e.preventDefault();
 
         const payload = {
@@ -380,12 +486,20 @@ class FlugbuchApp {
         btn.disabled = true;
 
         try {
-            await api.createModell(payload);
-            window.AppUtils.showToast('Modell erfolgreich angelegt', 'success');
+            if (this.editingModelId) {
+                await api.updateModell(this.editingModelId, payload);
+                window.AppUtils.showToast('Modell aktualisiert', 'success');
+                this.editingModelId = null;
+                btn.innerHTML = '<i class="fa-solid fa-plus"></i> Modell hinzufügen';
+                document.querySelector('.new-model-card h2').textContent = 'Neues Modell anlegen';
+            } else {
+                await api.createModell(payload);
+                window.AppUtils.showToast('Modell erfolgreich angelegt', 'success');
+            }
 
             this.newModelForm.reset();
+            document.getElementById('model-frequenz').value = '2.4 GHz';
 
-            // Reload the list in the mgmt view
             await this.loadModelle();
             this.renderModelsView();
 
@@ -394,6 +508,27 @@ class FlugbuchApp {
         } finally {
             btn.disabled = false;
         }
+    }
+
+    handleEditModel(id) {
+        const model = this.modelsList.find(m => m.id === parseInt(id) || m.id === id);
+        if (!model) return;
+
+        this.editingModelId = id;
+
+        document.getElementById('model-bezeichnung').value = model.bezeichnung;
+        document.getElementById('model-typ').value = model.modell_typ;
+        document.getElementById('model-antrieb').value = model.antrieb;
+        document.getElementById('model-gewichtsklasse').value = model.gewichtsklasse;
+        document.getElementById('model-frequenz').value = model.frequenz || '2.4 GHz';
+        document.getElementById('model-registriernummer').value = model.registriernummer || '';
+
+        const btn = this.newModelForm.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fa-solid fa-save"></i> Änderungen speichern';
+        document.querySelector('.new-model-card h2').textContent = 'Modell bearbeiten';
+
+        // Scroll to form
+        this.newModelForm.scrollIntoView({ behavior: 'smooth' });
     }
 
     renderModelsView() {
@@ -423,7 +558,10 @@ class FlugbuchApp {
                         ${m.registriernummer ? `<br><small style="color:var(--text-secondary);"><i class="fa-solid fa-passport"></i> Reg: ${m.registriernummer}</small>` : ''}
                     </div>
                 </div>
-                <div>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="btn-icon btn-edit-model" data-id="${m.id}" title="Modell bearbeiten" style="color:var(--primary)">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
                     <button class="btn-icon btn-delete-model" data-id="${m.id}" title="Modell löschen" style="color:var(--danger)">
                         <i class="fa-solid fa-trash"></i>
                     </button>
@@ -432,6 +570,9 @@ class FlugbuchApp {
             this.modelsListEl.appendChild(item);
         });
 
+        document.querySelectorAll('.btn-edit-model').forEach(btn => {
+            btn.addEventListener('click', (e) => this.handleEditModel(e.currentTarget.dataset.id));
+        });
         document.querySelectorAll('.btn-delete-model').forEach(btn => {
             btn.addEventListener('click', (e) => this.handleDeleteModel(e.currentTarget.dataset.id));
         });
@@ -480,13 +621,14 @@ class FlugbuchApp {
     // --- User Management Logic ---
     async handleCreateUser(e) {
         e.preventDefault();
+        const isAdmin = document.getElementById('new-user-admin').checked;
         const payload = {
             vorname: document.getElementById('new-user-vorname').value,
             nachname: document.getElementById('new-user-nachname').value,
             email: document.getElementById('new-user-email').value,
             passwort: document.getElementById('new-user-password').value,
-            rolle: document.getElementById('new-user-role').value,
-            hat_schulungsnachweis: document.getElementById('new-user-schulung').checked
+            rolle: isAdmin ? 'admin' : 'pilot',
+            hat_schulungsnachweis: false
         };
 
         const btn = this.newUserForm.querySelector('button[type="submit"]');
@@ -525,19 +667,16 @@ class FlugbuchApp {
                         </div>
                         <div class="flight-model">
                             <span class="badge" style="background:rgba(255, 255, 255, 0.1); color:var(--text-secondary);">${u.email || 'Keine E-Mail'}</span>
-                            <span class="badge ${u.rolle === 'admin' ? 'status-active' : (u.rolle === 'flugleiter' ? 'status-warning' : '')}" 
-                                  style="${u.rolle === 'flugleiter' ? 'background:rgba(245, 158, 11, 0.2); color:var(--warning);' : ''}">
-                                ${u.rolle.toUpperCase()}
-                            </span>
+                            ${isAdmin ? '<span class="badge status-active">ADMIN</span>' : ''}
                         </div>
                     </div>
                     ${!isMe ? `
                     <div style="display:flex; gap:0.5rem; align-items:center;">
-                        <select class="select-input role-select" data-id="${u.id}" style="padding:0.4rem; background:rgba(0,0,0,0.3); border-radius:4px; border:none; color:white;">
-                            <option value="pilot" ${u.rolle === 'pilot' ? 'selected' : ''}>Pilot</option>
-                            <option value="flugleiter" ${u.rolle === 'flugleiter' ? 'selected' : ''}>Flugleiter</option>
-                            <option value="admin" ${u.rolle === 'admin' ? 'selected' : ''}>Admin</option>
-                        </select>
+                        <label class="toggle-switch" title="Admin-Rechte">
+                            <input type="checkbox" class="admin-toggle" data-id="${u.id}" ${isAdmin ? 'checked' : ''}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:0.75rem; color:var(--text-secondary); min-width:2.5rem;">Admin</span>
                         <button class="btn-icon btn-password-change" data-id="${u.id}" title="Passwort ändern" style="color:var(--warning)">
                             <i class="fa-solid fa-key"></i>
                         </button>
@@ -549,17 +688,18 @@ class FlugbuchApp {
                 this.usersListEl.appendChild(item);
             });
 
-            // Bind role change
-            this.usersListEl.querySelectorAll('.role-select').forEach(sel => {
-                sel.addEventListener('change', async (e) => {
-                    const newRole = e.target.value;
+            // Bind admin toggle
+            this.usersListEl.querySelectorAll('.admin-toggle').forEach(toggle => {
+                toggle.addEventListener('change', async (e) => {
+                    const newRole = e.target.checked ? 'admin' : 'pilot';
                     const id = e.target.dataset.id;
                     try {
                         await api.updateUserRole(id, newRole);
-                        window.AppUtils.showToast("Rolle aktualisiert", "success");
+                        window.AppUtils.showToast(newRole === 'admin' ? 'Admin-Rechte erteilt' : 'Admin-Rechte entzogen', 'success');
+                        this.renderUsersView();
                     } catch (err) {
-                        window.AppUtils.showToast(err.message, "error");
-                        this.renderUsersView(); // revert select
+                        window.AppUtils.showToast(err.message, 'error');
+                        this.renderUsersView();
                     }
                 });
             });
@@ -653,6 +793,53 @@ class FlugbuchApp {
             window.AppUtils.showToast(error.message, "error");
         } finally {
             btn.disabled = false;
+        }
+    }
+
+    // --- Profile Self-Service ---
+    async handleSaveProfile() {
+        const vorname = document.getElementById('profile-vorname').value.trim();
+        const nachname = document.getElementById('profile-nachname').value.trim();
+        if (!vorname || !nachname) {
+            window.AppUtils.showToast('Bitte Vor- und Nachname eingeben', 'error');
+            return;
+        }
+        try {
+            const schulung = document.getElementById('profile-schulung').checked;
+            const flugordnung = document.getElementById('profile-flugordnung').checked;
+            const updated = await api.updateOwnProfile({ vorname, nachname, hat_schulungsnachweis: schulung, hat_flugordnung_bestaetigt: flugordnung });
+            this.currentUser.vorname = updated.vorname;
+            this.currentUser.nachname = updated.nachname;
+            this.currentUser.hat_schulungsnachweis = updated.hat_schulungsnachweis;
+            this.currentUser.hat_flugordnung_bestaetigt = updated.hat_flugordnung_bestaetigt;
+            localStorage.setItem('flugbuch_user', JSON.stringify(this.currentUser));
+            document.getElementById('nav-user-name').textContent = `${updated.vorname} ${updated.nachname}`;
+            this.profileMenu.classList.add('hidden');
+            window.AppUtils.showToast('Profil aktualisiert', 'success');
+        } catch (error) {
+            window.AppUtils.showToast(error.message, 'error');
+        }
+    }
+
+    async handleSavePassword() {
+        const newPw = document.getElementById('profile-new-password').value;
+        const confirmPw = document.getElementById('profile-confirm-password').value;
+        if (!newPw || newPw.length < 4) {
+            window.AppUtils.showToast('Passwort muss mindestens 4 Zeichen lang sein', 'error');
+            return;
+        }
+        if (newPw !== confirmPw) {
+            window.AppUtils.showToast('Passwörter stimmen nicht überein', 'error');
+            return;
+        }
+        try {
+            await api.updateOwnPassword(newPw);
+            document.getElementById('profile-new-password').value = '';
+            document.getElementById('profile-confirm-password').value = '';
+            this.profileMenu.classList.add('hidden');
+            window.AppUtils.showToast('Passwort erfolgreich geändert', 'success');
+        } catch (error) {
+            window.AppUtils.showToast(error.message, 'error');
         }
     }
 }

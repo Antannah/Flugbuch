@@ -1,6 +1,6 @@
 # Spezifikation: Flugbuch-App (Web)
 
-> **Version:** 0.1 – Entwurf  
+> **Version:** 0.2 – Aktualisiert  
 > **Datum:** 2026-03-03  
 > **Autor:** Projekt Flugbuch  
 > **Referenz:** MFSD-Flugbuch-App V.4.0.0.0, Handbuch Stand 05.02.2025
@@ -133,6 +133,7 @@ Eine **moderne Web-App** als Ersatz, die:
 | `email` | VARCHAR(100), UNIQUE | Login-E-Mail |
 | `passwort_hash` | VARCHAR(255) | Bcrypt-Hash |
 | `hat_schulungsnachweis` | BOOLEAN, DEFAULT FALSE | Schulungsnachweis vorhanden |
+| `hat_flugordnung_bestaetigt` | BOOLEAN, DEFAULT FALSE | Bestätigung der StRfF und Flugordnung |
 | `rolle` | ENUM('pilot', 'flugleiter', 'admin') | Berechtigungsrolle |
 
 | `ist_gast` | BOOLEAN, DEFAULT FALSE | Gastzugang (zeitlich begrenzt) |
@@ -150,7 +151,7 @@ Eine **moderne Web-App** als Ersatz, die:
 | `modell_typ` | ENUM('motorflugzeug', 'segelflugzeug', 'hubschrauber', 'multikopter', 'luftschiff', 'ballon', 'gleitschirm', 'rakete', 'sonstige') | Modelltyp |
 | `antrieb` | ENUM('elektro', 'verbrenner', 'turbine', 'raketenantrieb', 'ohne', 'sonstige') | Antriebsart |
 | `gewichtsklasse` | ENUM('bis_250g', 'bis_2kg', 'bis_4kg', 'bis_12kg', 'bis_25kg', 'ueber_25kg') | Gewichtsklasse |
-| `frequenz` | VARCHAR(20), NULLABLE | 2.4GHz oder Frequenz/Kanal (optional, für Alt-Systeme) |
+| `frequenz` | VARCHAR(20), NULLABLE | Vorbelegt mit "2.4 GHz", überschreibbar für Alt-Systeme (35/40 MHz) |
 | `registriernummer` | VARCHAR(50), NULLABLE | UAS-Registriernummer |
 | `aktiv` | BOOLEAN, DEFAULT TRUE | Modell ist aktiv / nicht gelöscht |
 | `created_at` | TIMESTAMP | Erstelldatum |
@@ -196,21 +197,17 @@ Eine **moderne Web-App** als Ersatz, die:
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  🛩  FLUGBUCH         [Datum: 03.03.2026 ▼]      │
+│  🛩  FLUGBUCH                  [Pilot ▾] [⎋]    │
 │─────────────────────────────────────────────────│
-│                                                 │
-│  Pilot:    [Max Mustermann          ▼]          │
-│  Gelände:  [MFG Uetze               ▼]          │
 │                                                 │
 │  ┌─── Neuer Eintrag ──────────────────────┐    │
 │  │                                         │    │
 │  │  ○ Modellflug   ○ Flugleiterdienst     │    │
 │  │                                         │    │
 │  │  Modell:  [Zephyr F5J              ▼]  │    │
-│  │  Start:   [10:30]   Ende: [──:──]      │    │
-│  │  Bemerkung: [________________________] │    │
 │  │                                         │    │
-│  │       [ ✈ Anmelden ]                   │    │
+│  │       [ ▶ Jetzt Starten ]              │    │
+│  │       [ 🕐 Zeit nachmelden ]           │    │
 │  └─────────────────────────────────────────┘    │
 │                                                 │
 │  ── Heutige Einträge ──────────────────────     │
@@ -222,9 +219,11 @@ Eine **moderne Web-App** als Ersatz, die:
 │  │Peter │⛑ FL   │08:00  │10:00  │⚪ fertig│    │
 │  └──────┴────────┴───────┴───────┴────────┘    │
 │                                                 │
-│       [ 🛑 Alle abmelden ]  [ 📄 Export ]       │
+│           [ 📄 CSV ]  [ 📄 PDF ] (nur Admin)    │
 └─────────────────────────────────────────────────┘
 ```
+
+> **Hinweis:** Die Datumsauswahl entfällt auf der Hauptseite – es wird immer das aktuelle Datum ("heute") verwendet. Für nachträgliche Einträge steht der Button **"Zeit nachmelden"** zur Verfügung, der ein Formular mit Datum, Startzeit und Endzeit aufklappt.
 
 ### 4.2 Formular-Felder im Detail
 
@@ -232,12 +231,12 @@ Eine **moderne Web-App** als Ersatz, die:
 |---|---|---|---|---|
 | **Pilot** | Dropdown | ✅ | user-Tabelle (gefiltert nach Verein) | Vorauswahl: eingeloggter User |
 | **Gelände** | Dropdown | ✅ | gelaende-Tabelle | Vorauswahl: Vereinsgelände |
-| **Datum** | Date-Picker | ✅ | Default: heute | Rückdatierung möglich |
+| **Datum** | Date-Picker | ✅ | Default: heute | Nur im \"Zeit nachmelden\"-Formular sichtbar |
 | **Typ** | Radio | ✅ | „Modellflug" / „Flugleiterdienst" | Blendet Modell-Felder bei FL aus |
-| **Modell** | Dropdown + Multi-Select | ✅ (bei Modellflug) | modell-Tabelle des Piloten | Multi-Select analog MFSD |
-| **Startzeit** | Time-Picker | ✅ | Default: aktuelle Uhrzeit | |
-| **Endzeit** | Time-Picker | ❌ | Leer bei Anmeldung | Wird bei Abmeldung gesetzt |
-| **Bemerkungen** | Textarea | ❌ | Freitext + vordefinierte Textbausteine | |
+| **Modell** | Dropdown | ✅ (bei Modellflug) | modell-Tabelle des Piloten | |
+| **Startzeit** | Time-Picker | ✅ | Automatisch (aktuelle Uhrzeit) | Im Nachmelde-Formular frei wählbar |
+| **Endzeit** | Time-Picker | ❌ | Leer bei Anmeldung | Wird bei Abmeldung gesetzt, im Nachmelde-Formular Pflichtfeld |
+| **Bemerkungen** | Textarea | ❌ | Freitext | |
 
 ### 4.3 Workflow
 
@@ -261,10 +260,31 @@ stateDiagram-v2
 |---|---|---|
 | **Admin** | Vereinsadministrator | Alles: User anlegen/löschen, Gelände verwalten, alle Einträge editieren/löschen, Export |
 | **Flugleiter** | Pilot mit Flugleiter-Berechtigung | Eigene Einträge + Flugleiterdienst erfassen, alle Einträge des Tages sehen |
-| **Pilot** | Normales Vereinsmitglied | Eigene Einträge erfassen, eigene Modelle verwalten, Tages-Flugbuch einsehen |
+| **Pilot** | Normales Vereinsmitglied | Eigene Einträge erfassen, eigene Modelle verwalten, Tages-Flugbuch einsehen, eigenes Profil bearbeiten |
 | **Gast** | Tagesgast | Eigene Einträge erfassen (nur Tageszugang), keine Modellverwaltung |
 
-### 5.2 Gastzugang
+### 5.2 Benutzerprofil (Self-Service)
+
+Jeder Benutzer kann über ein **Dropdown-Menü** (Klick auf den eigenen Namen in der Navigationsleiste) folgende Einstellungen selbst verwalten:
+
+| Einstellung | Beschreibung |
+|---|---|
+| **Vorname / Nachname** | Eigenes Profil bearbeiten |
+| **Schulungsnachweis** | Toggle: Schulungsnachweis vorhanden (Selbstauskunft) |
+| **Flugordnung** | Toggle: Bestätigung der StRfF und Flugordnung |
+| **Passwort** | Eigenes Passwort ändern |
+
+> **Hinweis:** Der Schulungsnachweis und die Flugordnungsbestätigung werden nicht bei der Benutzererstellung durch den Admin gesetzt, sondern vom Benutzer selbst im Profil aktiviert.
+
+### 5.3 Benutzerverwaltung (Admin)
+
+Admins können neue Benutzer anlegen (Vorname, Nachname, E-Mail, Passwort) und Admin-Rechte über einen **Toggle-Schalter** vergeben/entziehen.
+
+### 5.4 Modellverwaltung
+
+Modelle sind über einen Button neben der Modellauswahl im Dashboard erreichbar. Modelle können **erstellt, bearbeitet und gelöscht** werden. Das Frequenz-Feld ist mit **"2.4 GHz"** vorbelegt.
+
+### 5.5 Gastzugang
 
 Statt QR-Code mit FTP-Daten → **Einladungslink** mit Tages-Token:
 
@@ -317,8 +337,11 @@ Analog zur MFSD-App kann ein Modell-Eintrag als **Sammel-Eintrag** dienen:
 |---|---|---|
 | GET | `/api/users` | Alle Piloten des Vereins |
 | POST | `/api/users` | Neuen Piloten anlegen (Admin) |
-| PUT | `/api/users/{id}` | Pilotendaten bearbeiten |
-| DELETE | `/api/users/{id}` | Piloten deaktivieren (Admin) |
+| PUT | `/api/users/{id}/rolle` | Benutzerrolle ändern (Admin) |
+| PUT | `/api/users/{id}/passwort` | Passwort zurücksetzen (Admin) |
+| PUT | `/api/users/me/profil` | Eigenes Profil bearbeiten (Self-Service) |
+| PUT | `/api/users/me/passwort` | Eigenes Passwort ändern (Self-Service) |
+| DELETE | `/api/users/{id}` | Piloten löschen (Admin) |
 
 ### 7.3 Modelle
 
@@ -428,7 +451,7 @@ Für die Migration bestehender Daten aus der MFSD-App:
 *Entscheidung:* Flugstunden, Besucherstunden, Modellstunden, Anzahl der Flüge. Sowie eine Häufigkeitsverteilung der Flüge (Wochentags vs. Wochenende).
 
 5. **Unterschrift?** Die MFSD-App unterstützt Piloten-Unterschriften. Ist das weiterhin relevant? Welche Alternativen gibt es?
-*Lösung:* Eine handschriftliche Signatur auf dem Display ist sehr unhandlich. Wir setzen stattdessen auf ein **Checkbox-Opt-In** ("Ich bestätige die Geltung der StRfF..."). Da der Pilot authentifiziert ist (gesicherter Login via Token) und die Checkbox in der Datenbank mit einem nicht-veränderbaren Zeitstempel (Startzeit) als Boolean gespeichert wird, gilt dies im geschlossenen System des Vereins als revisionssichere Willenserklärung.
+*Lösung:* Die Bestätigung der StRfF und der Flugordnung erfolgt **im Benutzerprofil** als Toggle-Schalter ("Flugordnung bestätigt"). Das Feld `hat_flugordnung_bestaetigt` wird auf dem User-Modell gespeichert und bei jedem Flugeintrag automatisch in den Flugeintrag übernommen. Da der Pilot authentifiziert ist (gesicherter Login via Token) und die Bestätigung in der Datenbank als Boolean auf dem User-Profil gespeichert wird, gilt dies im geschlossenen System des Vereins als revisionssichere Willenserklärung.
 
 6. **QR-Code?** Die MFSD-App unterstützt QR-Code-Scan. Ist das weiterhin relevant? 
 *Lösung:* Ja. Ein Gelände-QR-Code ist meist ein einfacher kodierter String (z.B. `Gelaende#MFG_Kitzingen`). Wir haben in der Datenbank das Feld `qr_code_string` vorgesehen. In Phase 4 können wir den Kamera-Scanner im Browser via JavaScript (`html5-qrcode`) aktivieren. Scannt ein Pilot den Code am Platz, wird das Gelände im Dropdown sofort vorausgewählt.

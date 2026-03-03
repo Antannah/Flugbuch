@@ -111,6 +111,13 @@ class ApiClient {
         });
     }
 
+    async updateModell(id, data) {
+        return this.request(`/modelle/${id}`, {
+            method: 'PUT',
+            body: data
+        });
+    }
+
     async getFlugbuch(gelaendeId, datum) {
         let url = `/flugbuch?gelaende_id=${gelaendeId}`;
         if (datum) url += `&datum=${datum}`;
@@ -219,6 +226,21 @@ class ApiClient {
     async deleteUser(id) {
         return this.request(`/users/${id}`, {
             method: 'DELETE'
+        });
+    }
+
+    // Self-service profile
+    async updateOwnProfile(data) {
+        return this.request('/users/me/profil', {
+            method: 'PUT',
+            body: data
+        });
+    }
+
+    async updateOwnPassword(passwort) {
+        return this.request('/users/me/passwort', {
+            method: 'PUT',
+            body: { passwort }
         });
     }
 

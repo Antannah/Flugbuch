@@ -1,5 +1,5 @@
 # PowerShell Deployment Script for Flugbuch
-# Targets: Local-to-Remote Deployment (Windows -> tiffy)
+# Überträgt nur die für den Server notwendigen Dateien via scp.
 
 $ErrorActionPreference = "Stop"
 $TargetHost = "tiffy"
@@ -10,20 +10,23 @@ Write-Host ">>> Starte Remote-Deployment nach $TargetHost..." -ForegroundColor C
 # Sicherstellen, dass wir im richtigen Verzeichnis sind
 Set-Location -Path $PSScriptRoot
 
-# 1. Daten zum Server hochladen
-Write-Host ">>> Packe Daten (exklusive venv/.git)..." -ForegroundColor Yellow
-tar --exclude="venv" --exclude=".git" --exclude="backend/data" -cf deploy_bundle.tar .
+# 1. Zielverzeichnisse auf dem Server vorbereiten
+Write-Host ">>> Erstelle Zielverzeichnisse auf dem Server..." -ForegroundColor Yellow
+ssh $TargetHost "mkdir -p ${TargetDir}/backend ${TargetDir}/frontend"
 
-Write-Host ">>> Übertrage Bundle nach $TargetHost..." -ForegroundColor Yellow
-scp deploy_bundle.tar "${TargetHost}:${TargetDir}/"
+# 2. Nur benötigte Dateien übertragen
+Write-Host ">>> Übertrage Deployment-Dateien..." -ForegroundColor Yellow
+scp Dockerfile docker-compose.yml deploy.sh "${TargetHost}:${TargetDir}/"
 
-Write-Host ">>> Entpacke Bundle auf dem Server..." -ForegroundColor Yellow
-ssh $TargetHost "tar -xf ${TargetDir}/deploy_bundle.tar -C $TargetDir && rm ${TargetDir}/deploy_bundle.tar"
+Write-Host ">>> Übertrage Backend..." -ForegroundColor Yellow
+scp -r backend/routers backend/models.py backend/main.py backend/database.py backend/schemas.py backend/auth.py backend/init_db.py backend/requirements.txt "${TargetHost}:${TargetDir}/backend/"
 
-# 2. Remote Deployment triggern
+Write-Host ">>> Übertrage Frontend..." -ForegroundColor Yellow
+scp -r frontend/index.html frontend/css frontend/js "${TargetHost}:${TargetDir}/frontend/"
+
+# 3. Remote Deployment triggern
 Write-Host ">>> Triggere Deployment auf dem Server..." -ForegroundColor Yellow
-# Wir nutzen sudo für Docker-Befehle, falls nötig
 ssh $TargetHost "cd $TargetDir && sudo bash deploy.sh --server"
 
 Write-Host ">>> Remote-Deployment erfolgreich abgeschlossen." -ForegroundColor Green
-Write-Host ">>> Die App sollte unter http://$TargetHost:9277 (oder via Proxy) erreichbar sein." -ForegroundColor Green
+Write-Host ">>> Die App sollte unter https://flugbuch.antannah.blausee.eu erreichbar sein." -ForegroundColor Green

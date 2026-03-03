@@ -52,6 +52,7 @@ class User(Base):
     email = Column(String(100), unique=True, index=True)
     passwort_hash = Column(String(255))
     hat_schulungsnachweis = Column(Boolean, default=False)
+    hat_flugordnung_bestaetigt = Column(Boolean, default=False)
     rolle = Column(Enum(UserRole), default=UserRole.pilot)
     ist_gast = Column(Boolean, default=False)
     gast_gueltig_bis = Column(Date, nullable=True)

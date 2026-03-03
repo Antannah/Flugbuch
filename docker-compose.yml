@@ -4,10 +4,24 @@ services:
   flugbuch:
     build: .
     container_name: flugbuch_app
-    ports:
-      - "9277:8000"
+    # The startup command
+    command: [ "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80" ]
+    # ports:
+    #   - "9277:8000" # Lokal nicht mehr nötig
     environment:
       - DATABASE_URL=sqlite:///./data/flugbuch.db
     volumes:
       - ./data:/app/backend/data
+    networks:
+      - rproxy_ext
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flugbuch.rule=Host(`flugbuch.antannah.blausee.eu`)"
+      - "traefik.http.routers.flugbuch.entrypoints=websecure"
+      - "traefik.http.routers.flugbuch.tls.certresolver=default"
+      - "traefik.http.services.flugbuch.loadbalancer.server.port=80"
     restart: unless-stopped
+
+networks:
+  rproxy_ext:
+    external: true
