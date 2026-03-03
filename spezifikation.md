@@ -288,8 +288,9 @@ https://flugbuch.mfg-uetze.de/gast?token=abc123&datum=2026-03-03
 | **Modelltyp** | Dropdown: Motorflugzeug, Segelflugzeug, Hubschrauber, Multikopter, Sonstige | ModellTypCodes |
 | **Antrieb** | Dropdown: Elektro, Verbrenner, Turbine, Ohne, Sonstige | MotorTypCodes |
 | **Gewichtsklasse** | Dropdown: ≤250g, ≤2kg, ≤4kg, ≤12kg, ≤25kg, >25kg | GewichtsKlasse |
-| **Registriernummer** | Optional, UAS-Betreiber-Nummer | Registriernummer |
+| **Registriernummer** | Optional, Registriernummer >25kg | Registriernummer>25kg |
 | **Aktiv** | Toggle — deaktivierte Modelle erscheinen nicht in der Auswahl | (neu) |
+| **Kanal** | Funkfrequenz | Funkfrequenz 2,4 GHz oder Kanalnummer bei 35 MHz |
 
 ### 6.2 Modell-Gruppen
 
@@ -403,53 +404,66 @@ Für die Migration bestehender Daten aus der MFSD-App:
 
 ## 11. Phasenplanung
 
-| Phase | Inhalt | Geschätzter Aufwand |
-|---|---|---|
-| **Phase 1** | Backend (FastAPI + DB), Auth, Flugeintrag-CRUD, einfaches Web-Frontend | 2–3 Wochen |
-| **Phase 2** | Modellverwaltung, Benutzerverwaltung, PDF/CSV-Export | 1–2 Wochen |
-| **Phase 3** | Dashboard / Statistiken, PWA, Offline-Fähigkeit | 1–2 Wochen |
-| **Phase 4** |  Gastzugang, QR-Code-Scan | 1 Woche |
-| **Phase 5** | FBD-Import (MFSD-Migration) | 1 Woche |
+| Phase | Inhalt |
+|---|---|
+| **Phase 1** | Backend (FastAPI + DB), Auth, Flugeintrag-CRUD, einfaches Web-Frontend |
+| **Phase 2** | Modellverwaltung, Benutzerverwaltung, PDF/CSV-Export |
+| **Phase 3** | Dashboard / Statistiken, PWA, Offline-Fähigkeit |
+| **Phase 4** |  Gastzugang, QR-Code-Scan |
+| **Phase 5** | FBD-Import (MFSD-Migration) |
 ---
 
 ## 12. Offene Fragen
 
 1. **Vereinsübergreifend?** Soll die App von Anfang an mehrere Vereine unterstützen oder zunächst nur für euren Verein?
-Nur unser Verein, er heißt Modellfluggemeinschaft Kitzingen e.V. (MFGKT), wir haben auch eine Webseite unter: https://www.mfgkitzingen.de/
-2. **Offline-Modos?** Wie wichtig ist Offline-Fähigkeit (kein Empfang auf dem Flugplatz)?
-lassen wir erstmal weg
-3. **MFSD-Kompatibilität?** Soll ein FBD-Import/Export für Migration beibehalten werden?
-nein
-4. **Dashboard?** Welche Statistiken sind gewünscht (Flugstunden/Monat, Modell-Ranking, etc.)?
-Flugstunden, Besucherstunden, Modellstunden, Anzahl der Flüge
-Häufigkeitsverteilung der Flüge unter der Woche, am Wochenende
+*Entscheidung:* Nur für den eigenen Verein (Modellfluggemeinschaft Kitzingen e.V. - MFGKT).
 
-5. **Unterschrift?** Die MFSD-App unterstützt Piloten-Unterschriften. Ist das weiterhin relevant?
-Welche Alternativen gibt es? Digital signiert wäre gut, aber wie umständlich in der handhabung?
-6. **QR-Code?** Die MFSD-App unterstützt QR-Code-Scan. Ist das weiterhin relevant?
-Kennen wir den Aufbau des QR codes, wozu dien dieser? Falls es das Fluggelände kennzeichnet und wir ihn identisch zu dem des MFSD hin bekommen, dann ja.
-7. **DSGVO?** Ist es zulässig, das namen und Modelle der User in der Liste für alle sichtbar sind?
+2. **Offline-Modus?** Wie wichtig ist Offline-Fähigkeit (kein Empfang auf dem Flugplatz)?
+*Entscheidung:* Wird für die erste Version zurückgestellt (Phase 3).
+
+3. **MFSD-Kompatibilität?** Soll ein FBD-Import/Export für Migration beibehalten werden?
+*Entscheidung:* Nein, nicht erforderlich.
+
+4. **Dashboard?** Welche Statistiken sind gewünscht?
+*Entscheidung:* Flugstunden, Besucherstunden, Modellstunden, Anzahl der Flüge. Sowie eine Häufigkeitsverteilung der Flüge (Wochentags vs. Wochenende).
+
+5. **Unterschrift?** Die MFSD-App unterstützt Piloten-Unterschriften. Ist das weiterhin relevant? Welche Alternativen gibt es?
+*Lösung:* Eine handschriftliche Signatur auf dem Display ist sehr unhandlich. Wir setzen stattdessen auf ein **Checkbox-Opt-In** ("Ich bestätige die Geltung der StRfF..."). Da der Pilot authentifiziert ist (gesicherter Login via Token) und die Checkbox in der Datenbank mit einem nicht-veränderbaren Zeitstempel (Startzeit) als Boolean gespeichert wird, gilt dies im geschlossenen System des Vereins als revisionssichere Willenserklärung.
+
+6. **QR-Code?** Die MFSD-App unterstützt QR-Code-Scan. Ist das weiterhin relevant? 
+*Lösung:* Ja. Ein Gelände-QR-Code ist meist ein einfacher kodierter String (z.B. `Gelaende#MFG_Kitzingen`). Wir haben in der Datenbank das Feld `qr_code_string` vorgesehen. In Phase 4 können wir den Kamera-Scanner im Browser via JavaScript (`html5-qrcode`) aktivieren. Scannt ein Pilot den Code am Platz, wird das Gelände im Dropdown sofort vorausgewählt.
+
+7. **DSGVO?** Ist es zulässig, dass Namen und Modelle der User in der Liste für alle sichtbar sind?
+*Bewertung:* Innerhalb eines *geschlossenen, durch Login gesicherten Bereichs* eines Vereins ist die Sichtbarkeit der aktiven Piloten aus Sicherheits- und Koordinationsgründen (Flugleiter-Prinzip, Frequenzüberwachung) in der Regel durch das "berechtigte Interesse" (Art. 6 Abs. 1 lit. f DSGVO) abgedeckt. Es werden keine übermäßigen privaten Daten (wie Wohnort oder Alter) geteilt, sondern nur der flugbetriebliche Status.
 
 
 ## 13. Testplan
-1. **Testumgebung**
-   - Docker-Container mit PostgreSQL
-   - FastAPI-Server
-   - Test-Datenbank
-   - Test-User
-2. **Tests**
-   - Userverwaltung
-   - Authentifizierung
-   - Modellverwaltung
-   - Flugeintragverwaltung
-   - PDF/CSV-Export
-   - Gasgastzugang
-   - QR-Code-Scan
-   - Dashboard
-   - Backup
-   - Performance
-   - Responsive
-   - Sicherheit
+
+Um die Stabilität der Applikation zu gewährleisten, werden folgende Testroutinen durchgeführt:
+
+1. **Backend-Tests (Automatisierte Unit-Tests mit `pytest`)**
+   - *Authentifizierung:* Prüfen, ob bei falschem Passwort der Login verwehrt wird und ob Gast-Tokens nach Ablaufdatum ungültig werden.
+   - *Rollen & Berechtigungen:* Sicherstellen, dass nur Admins neue Locations (`Gelaende`) anlegen können, Piloten aber nicht.
+   - *Flugbuch-Logik:* Überprüfen, ob das Beenden eines Fluges die aktuelle Uhrzeit korrekt in die Datenbank als `endzeit` schreibt und keine abgeschlossenen Flüge mehr in der "aktiv" Zählung auftauchen.
+
+2. **Frontend UI/UX Tests (Manuelles Testen / Browser-Automatisierung)**
+   - *Responsive Design:* Prüfen der Ansichten (Login, Dashboard, Modelle) auf mobilen Geräten (Viewport < 600px).
+   - *Formular-Validierungen:* Verhindern, dass ein Flug ohne beständige Checkbox oder ohne ausgewähltes Modell (außer beim Flugleiterdienst) gestartet werden kann.
+   - *State Management:* Sicherstellen, dass beim Hinzufügen eines neuen Modells im Modal-Fenster die Dropdown-Liste im Dashboard sofort aktualisiert wird, ohne die Seite neu laden zu müssen.
+
+3. **Integrierte End-to-End Test-Routinen**
+   - *Datenintegrität:* Pilot A loggt sich ein, erstellt ein Modell, startet einen Flug. Pilot B loggt sich am selben Gelände ein. Es muss geprüft werden, ob Pilot B den aktiven Flug von Pilot A auf dem Dashboard sehen kann.
+   - *Offline-Simulation (Phase 3):* Netzwerkverbindung im Browser-Dev-Tools trennen, Flug eintragen, Netzwerk wiederherstellen und prüfen, ob der Service-Worker die Daten im Hintergrund an die API synchronisiert.
+   - *Performance (Last- und Ladezeiten):*
+     - *API-Lasttest (Stress Testing):* Simulation von z. B. 50 gleichzeitigen Nutzern (repräsentativ für einen stark besuchten Flugtag oder Wettbewerb). Mit Tools wie `locust` oder `k6` wird verifiziert, dass die API-Antwortzeiten auch unter Last unter der spezifizierten Grenze von 500 ms bleiben.
+     - *Latenz-Simulation:* Drosselung der Netzwerkgeschwindigkeit in den Dev-Tools (z. B. auf 3G/Edge-Niveau), um das Verhalten der App bei schlechter Netzabdeckung am Flugplatz zu testen. Das Dashboard sollte dennoch zügig rendern (Ziel: First Contentful Paint < 2s).
+   - *Responsive Design & Ergonomie (Mobile Testing):*
+     - *Darstellung auf Kleinst-Displays:* Testen der großen Flugbuch-Tabelle (Tagesübersicht) auf schmalen Smartphone-Displays (Hochformat). Prüfen, ob horizontales Scrollen flüssig funktioniert oder ob die Tabelle korrekt in ein Kachel-Design umbricht.
+     - *Touch-Ziele & Outdoor-Einsatz:* Sicherstellen, dass die primären Interaktionselemente (Anmelden, Abmelden, Modellwahl) groß genug sind, um sie auch bei ungünstigen Bedingungen (z. B. kalte Hände, Blendwirkung durch Sonnenlicht) zielsicher bedienen zu können. Testen des Kontrasts im Light-Mode für direkte Sonneneinstrahlung.
+   - *Sicherheit (Security Testing):*
+     - *Autorisierungsprüfung (IDOR - Insecure Direct Object Reference):* Gezielter API-Test auf Backend-Ebene: Es wird versucht, mit dem JWT (JSON Web Token) von `Pilot A` den Flugeintrag oder die Modelldaten von `Pilot B` über direkte Manipulation der Objekt-ID (via `PUT` oder `DELETE`) zu verändern. Das Backend muss dies mit einem 403 Forbidden ablehnen.
+     - *Eingabevalidierung (XSS & Injection):* Eingabe von potenziell gefährlichen Zeichenketten (z. B. `<script>alert(1)</script>`) in das Freitextfeld "Bemerkungen". Es muss sichergestellt werden, dass diese Daten sowohl in der Datenbank korrekt escaped werden (PostgreSQL / SQLAlchemy) als auch im Frontend sicher gerendert werden (Schutz vor Cross-Site-Scripting).
+     - *Token Expiry:* Simulation abgelaufener JWT-Tokens. Das System muss den Nutzer automatisch ausloggen oder im Hintergrund über den `/api/auth/refresh`-Endpunkt (falls implementiert) einen neuen Token anfordern, ohne dass es zu einem inkonsistenten App-Zustand kommt.
    
 
 

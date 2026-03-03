@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flugbuch MFG Kitzingen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div id="app-container">
+        <!-- Views will be dynamically loaded here by app.js -->
+
+        <!-- Login View -->
+        <div id="view-login" class="view active-view">
+            <div class="glass-card login-card">
+                <div class="logo-container">
+                    <i class="fa-solid fa-plane-departure logo-icon"></i>
+                    <h1>MFG Kitzingen</h1>
+                    <p class="subtitle">Digitales Flugbuch</p>
+                </div>
+
+                <form id="login-form">
+                    <div class="input-group">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="login-email" placeholder="E-Mail Adresse" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="login-password" placeholder="Passwort" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Anmelden <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <div id="login-error" class="error-message hidden"></div>
+                </form>
+
+                <div class="divider">oder</div>
+
+                <button id="btn-show-gast" class="btn btn-secondary btn-block">Als Tagesgast anmelden</button>
+            </div>
+        </div>
+
+        <!-- Dashboard View (Flugbuch) -->
+        <div id="view-dashboard" class="view hidden">
+            <nav class="glass-nav">
+                <div class="nav-brand">
+                    <i class="fa-solid fa-plane"></i>
+                    <span>Flugbuch</span>
+                </div>
+                <div class="nav-user">
+                    <span id="nav-user-name">Pilot</span>
+                    <button id="btn-logout" class="btn-icon" title="Abmelden"><i
+                            class="fa-solid fa-right-from-bracket"></i></button>
+                </div>
+            </nav>
+
+            <main class="dashboard-content">
+                <header class="dashboard-header">
+                    <div class="date-selector glass-panel">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        <input type="date" id="current-date" class="date-input">
+                    </div>
+                    <div class="location-selector glass-panel">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <select id="current-gelaende" class="select-input">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                </header>
+
+                <section class="action-section">
+                    <div class="glass-card start-flight-card">
+                        <h2>Neuer Eintrag</h2>
+
+                        <div class="flight-type-selector">
+                            <label class="radio-card active">
+                                <input type="radio" name="flight_type" value="modellflug" checked>
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Modellflug</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="flight_type" value="flugleiter">
+                                <i class="fa-solid fa-user-shield"></i>
+                                <span>Flugleiterdienst</span>
+                            </label>
+                        </div>
+
+                        <form id="start-flight-form">
+                            <div class="input-group" id="model-select-group">
+                                <div style="display: flex; gap: 0.5rem; width: 100%;">
+                                    <div style="flex-grow: 1; position: relative;">
+                                        <i class="fa-solid fa-jet-fighter"
+                                            style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
+                                        <select id="flight-modell" required
+                                            style="width: 100%; padding: 0.8rem 1rem 0.8rem 2.5rem; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--surface-border); border-radius: 8px; color: var(--text-primary); cursor: pointer;">
+                                            <option value="" disabled selected>Modell auswählen...</option>
+                                            <!-- Populated by JS -->
+                                        </select>
+                                    </div>
+                                    <button type="button" id="btn-manage-models" class="btn btn-secondary"
+                                        title="Modelle verwalten" style="padding: 0 1rem;">
+                                        <i class="fa-solid fa-list-ul"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="legal-checkbox">
+                                <label>
+                                    <input type="checkbox" id="legal-confirm" required>
+                                    <span class="custom-checkbox"></span>
+                                    <span>Ich bestätige die Geltung der StRfF und der Flugordnung der MFG Kitzingen
+                                        e.V.</span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-large btn-block" id="btn-start-flight">
+                                <i class="fa-solid fa-play"></i> Jetzt Starten
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="log-section">
+                    <div class="section-title">
+                        <h2>Heutige Flüge</h2>
+                        <span id="active-flights-count" class="badge">0 aktiv</span>
+                    </div>
+                    <div id="flight-list" class="flight-list">
+                        <!-- Populated by JS -->
+                        <div class="empty-state">Lade Flugbuch...</div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Model Management View -->
+    <div id="view-models" class="view hidden">
+        <nav class="glass-nav">
+            <div class="nav-brand">
+                <button id="btn-back-dashboard" class="btn-icon" title="Zurück"><i
+                        class="fa-solid fa-arrow-left"></i></button>
+                <span>Meine Modelle</span>
+            </div>
+        </nav>
+
+        <main class="dashboard-content">
+            <section class="glass-card new-model-card">
+                <h2>Neues Modell anlegen</h2>
+                <form id="new-model-form">
+                    <div class="input-group">
+                        <input type="text" id="model-bezeichnung" placeholder="Bezeichnung (z.B. EasyGlider)" required>
+                    </div>
+                    <div class="input-group">
+                        <select id="model-typ" required>
+                            <option value="" disabled selected>Modelltyp...</option>
+                            <option value="motorflugzeug">Motorflugzeug</option>
+                            <option value="segelflugzeug">Segelflugzeug</option>
+                            <option value="hubschrauber">Hubschrauber</option>
+                            <option value="multikopter">Multikopter</option>
+                            <option value="sonstige">Sonstige</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select id="model-antrieb" required>
+                            <option value="" disabled selected>Antriebsart...</option>
+                            <option value="elektro">Elektro</option>
+                            <option value="verbrennung">Verbrennung</option>
+                            <option value="turbine">Turbine</option>
+                            <option value="kein_antrieb">Segler (ohne Antrieb)</option>
+                            <option value="anderer">Anderer</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select id="model-gewichtsklasse" required>
+                            <option value="" disabled selected>Gewichtsklasse...</option>
+                            <option value="bis_250g">bis 250g</option>
+                            <option value="bis_2kg">bis 2kg</option>
+                            <option value="bis_4kg">bis 4kg</option>
+                            <option value="bis_12kg">bis 12kg</option>
+                            <option value="bis_25kg">bis 25kg</option>
+                            <option value="bis_150kg">über 25kg / bis 150kg</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="model-frequenz" placeholder="Kanal / Funkfrequenz (z.B. 2.4 GHz)"
+                            required>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="model-registriernummer" placeholder="Registriernummer (>25kg Optional)">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fa-solid fa-plus"></i> Modell hinzufügen
+                    </button>
+                </form>
+            </section>
+
+            <section class="log-section">
+                <div class="section-title">
+                    <h2>Gespeicherte Modelle</h2>
+                    <span id="models-count" class="badge">0</span>
+                </div>
+                <div id="models-list" class="flight-list">
+                    <!-- Populated by JS -->
+                    <div class="empty-state">Keine Modelle gefunden.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
