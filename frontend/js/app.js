@@ -342,20 +342,19 @@ class FlugbuchApp {
 
         // Reset and check admin visibility
         const isAdmin = user.rolle === 'admin';
+        const navCenter = document.querySelector('.nav-center');
 
-        if (this.btnAdminUsers) {
-            if (isAdmin) this.btnAdminUsers.classList.remove('hidden');
-            else this.btnAdminUsers.classList.add('hidden');
-        }
+        if (navCenter) {
+            if (isAdmin) {
+                navCenter.classList.remove('hidden');
 
-        if (this.btnAdminSettings) {
-            if (isAdmin) this.btnAdminSettings.classList.remove('hidden');
-            else this.btnAdminSettings.classList.add('hidden');
-        }
-
-        if (this.btnAdminAnalyse) {
-            if (isAdmin) this.btnAdminAnalyse.classList.remove('hidden');
-            else this.btnAdminAnalyse.classList.add('hidden');
+                // Show the buttons themselves just in case they have hidden class
+                if (this.btnAdminUsers) this.btnAdminUsers.classList.remove('hidden');
+                if (this.btnAdminSettings) this.btnAdminSettings.classList.remove('hidden');
+                if (this.btnAdminAnalyse) this.btnAdminAnalyse.classList.remove('hidden');
+            } else {
+                navCenter.classList.add('hidden');
+            }
         }
 
         try {

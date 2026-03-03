@@ -270,8 +270,8 @@ body {
 
 /* --- Dashboard Nav --- */
 .glass-nav {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     padding: 1rem 1.5rem;
     position: sticky;
@@ -291,9 +291,17 @@ body {
     color: var(--primary);
 }
 
+.nav-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
 .nav-user {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 1rem;
     font-size: 0.9rem;
 }
@@ -303,6 +311,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    width: 100%;
+    margin: 0 auto;
 }
 
 /* Date & Location Header */

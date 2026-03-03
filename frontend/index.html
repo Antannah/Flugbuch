@@ -53,13 +53,16 @@
                     <span>Flugbuch</span>
                 </div>
 
-                <div class="nav-user">
-                    <button id="btn-admin-users" class="btn-icon hidden" title="Benutzerverwaltung (Admin)"><i
+                <div class="nav-center hidden">
+                    <button id="btn-admin-users" class="btn-icon" title="Benutzerverwaltung (Admin)"><i
                             class="fa-solid fa-users"></i></button>
-                    <button id="btn-admin-analyse" class="btn-icon hidden" title="Analyse (Admin)"><i
+                    <button id="btn-admin-analyse" class="btn-icon" title="Analyse (Admin)"><i
                             class="fa-solid fa-chart-line"></i></button>
-                    <button id="btn-admin-settings" class="btn-icon hidden" title="Einstellungen (Admin)"><i
+                    <button id="btn-admin-settings" class="btn-icon" title="Einstellungen (Admin)"><i
                             class="fa-solid fa-gear"></i></button>
+                </div>
+
+                <div class="nav-user">
                     <div class="profile-dropdown">
                         <button id="btn-profile-trigger" class="btn-profile-trigger" title="Profil">
                             <span id="nav-user-name">Pilot</span>
@@ -240,347 +243,356 @@
                 </section>
             </main>
         </div>
-    </div>
 
-    <!-- Analyse View (Admin) -->
-    <div id="view-analyse" class="view hidden">
-        <nav class="glass-nav">
-            <div class="nav-brand">
-                <button id="btn-back-dashboard-from-analyse" class="btn-icon" title="Zurück"><i
-                        class="fa-solid fa-arrow-left"></i></button>
-                <span>Analyse</span>
-            </div>
-        </nav>
-
-        <main class="dashboard-content" style="max-width: 900px; margin: 0 auto;">
-            <section class="glass-panel" style="padding: 1.25rem; margin-bottom: 1.5rem;">
-                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
-                    <button class="btn btn-secondary analyse-preset" data-preset="heute"
-                        style="font-size:0.8rem; padding:0.4rem 0.8rem;">Heute</button>
-                    <button class="btn btn-secondary analyse-preset" data-preset="woche"
-                        style="font-size:0.8rem; padding:0.4rem 0.8rem;">Diese Woche</button>
-                    <button class="btn btn-secondary analyse-preset" data-preset="monat"
-                        style="font-size:0.8rem; padding:0.4rem 0.8rem;">Diesen Monat</button>
-                    <button class="btn btn-secondary analyse-preset" data-preset="jahr"
-                        style="font-size:0.8rem; padding:0.4rem 0.8rem;">Dieses Jahr</button>
+        <!-- Analyse View (Admin) -->
+        <div id="view-analyse" class="view hidden">
+            <nav class="glass-nav">
+                <div class="nav-brand">
+                    <button id="btn-back-dashboard-from-analyse" class="btn-icon" title="Zurück"><i
+                            class="fa-solid fa-arrow-left"></i></button>
+                    <span>Analyse</span>
                 </div>
-                <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:flex-end;">
-                    <div class="input-group" style="flex:2; min-width:180px;">
-                        <label
-                            style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Suche</label>
-                        <input type="text" id="analyse-search" placeholder="Pilot, Modell..." class="input"
-                            style="padding:0.6rem 0.75rem;">
-                    </div>
-                    <div class="input-group" style="flex:1; min-width:140px;">
-                        <label style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Von</label>
-                        <input type="date" id="analyse-date-from" class="input" style="padding:0.6rem 0.75rem;">
-                    </div>
-                    <div class="input-group" style="flex:1; min-width:140px;">
-                        <label style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Bis</label>
-                        <input type="date" id="analyse-date-to" class="input" style="padding:0.6rem 0.75rem;">
-                    </div>
-                    <button id="btn-analyse-filter" class="btn btn-primary" style="padding:0.6rem 1.25rem;">
-                        <i class="fa-solid fa-filter"></i> Filtern
-                    </button>
-                </div>
-            </section>
+            </nav>
 
-            <!-- Tabs -->
-            <div class="analyse-tabs"
-                style="display:flex; gap:0; margin-bottom:1.25rem; border-radius:8px; overflow:hidden; border:1px solid var(--surface-border);">
-                <button id="tab-liste" class="analyse-tab active"
-                    style="flex:1; padding:0.6rem 1rem; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; transition:var(--transition); background:var(--primary); color:white;">
-                    <i class="fa-solid fa-list"></i> Liste
-                </button>
-                <button id="tab-statistik" class="analyse-tab"
-                    style="flex:1; padding:0.6rem 1rem; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; transition:var(--transition); background:rgba(15,23,42,0.6); color:var(--text-secondary);">
-                    <i class="fa-solid fa-chart-bar"></i> Statistiken
-                </button>
-            </div>
-
-            <!-- Tab: Liste -->
-            <div id="panel-liste">
-                <section class="log-section">
-                    <div class="section-title">
-                        <h2>Flugeinträge</h2>
-                        <span id="analyse-count" class="badge">0</span>
+            <main class="dashboard-content" style="max-width: 600px; margin: 0 auto;">
+                <section class="glass-panel" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+                        <button class="btn btn-secondary analyse-preset" data-preset="heute"
+                            style="font-size:0.8rem; padding:0.4rem 0.8rem;">Heute</button>
+                        <button class="btn btn-secondary analyse-preset" data-preset="woche"
+                            style="font-size:0.8rem; padding:0.4rem 0.8rem;">Diese Woche</button>
+                        <button class="btn btn-secondary analyse-preset" data-preset="monat"
+                            style="font-size:0.8rem; padding:0.4rem 0.8rem;">Diesen Monat</button>
+                        <button class="btn btn-secondary analyse-preset" data-preset="jahr"
+                            style="font-size:0.8rem; padding:0.4rem 0.8rem;">Dieses Jahr</button>
                     </div>
-                    <div style="overflow-x:auto;">
-                        <table id="analyse-table" class="analyse-table"
-                            style="width:100%; border-collapse:collapse; font-size:0.85rem;">
-                            <thead>
-                                <tr style="border-bottom:2px solid var(--surface-border); text-align:left;">
-                                    <th style="padding:0.6rem 0.5rem;">Datum</th>
-                                    <th style="padding:0.6rem 0.5rem;">Pilot</th>
-                                    <th style="padding:0.6rem 0.5rem;">Modell</th>
-                                    <th style="padding:0.6rem 0.5rem;">Start</th>
-                                    <th style="padding:0.6rem 0.5rem;">Ende</th>
-                                    <th style="padding:0.6rem 0.5rem;">Modelltyp</th>
-                                </tr>
-                            </thead>
-                            <tbody id="analyse-tbody">
-                                <tr>
-                                    <td colspan="6" class="empty-state">Filter anwenden um Einträge zu laden...</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:flex-end;">
+                        <div class="input-group" style="flex:2; min-width:180px;">
+                            <label
+                                style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Suche</label>
+                            <input type="text" id="analyse-search" placeholder="Pilot, Modell..." class="input"
+                                style="padding:0.6rem 0.75rem;">
+                        </div>
+                        <div class="input-group" style="flex:1; min-width:140px;">
+                            <label
+                                style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Von</label>
+                            <input type="date" id="analyse-date-from" class="input" style="padding:0.6rem 0.75rem;">
+                        </div>
+                        <div class="input-group" style="flex:1; min-width:140px;">
+                            <label
+                                style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Bis</label>
+                            <input type="date" id="analyse-date-to" class="input" style="padding:0.6rem 0.75rem;">
+                        </div>
+                        <button id="btn-analyse-filter" class="btn btn-primary" style="padding:0.6rem 1.25rem;">
+                            <i class="fa-solid fa-filter"></i> Filtern
+                        </button>
                     </div>
                 </section>
 
-                <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:flex-end;">
-                    <button id="btn-analyse-export-csv" class="btn btn-secondary">
-                        <i class="fa-solid fa-file-csv"></i> CSV Export
+                <!-- Tabs -->
+                <div class="analyse-tabs"
+                    style="display:flex; gap:0; margin-bottom:1.25rem; border-radius:8px; overflow:hidden; border:1px solid var(--surface-border);">
+                    <button id="tab-liste" class="analyse-tab active"
+                        style="flex:1; padding:0.6rem 1rem; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; transition:var(--transition); background:var(--primary); color:white;">
+                        <i class="fa-solid fa-list"></i> Liste
                     </button>
-                    <button id="btn-analyse-export-pdf" class="btn btn-secondary">
-                        <i class="fa-solid fa-file-pdf"></i> PDF Export
+                    <button id="tab-statistik" class="analyse-tab"
+                        style="flex:1; padding:0.6rem 1rem; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; transition:var(--transition); background:rgba(15,23,42,0.6); color:var(--text-secondary);">
+                        <i class="fa-solid fa-chart-bar"></i> Statistiken
                     </button>
                 </div>
-            </div>
 
-            <!-- Tab: Statistiken -->
-            <div id="panel-statistik" class="hidden">
-                <div class="stats-grid"
-                    style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
-                    <div class="glass-panel" style="padding:1rem; text-align:center;">
-                        <div
-                            style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
-                            Flüge gesamt</div>
-                        <div id="stat-total-flights"
-                            style="font-size:1.8rem; font-weight:700; color:var(--primary); margin-top:0.25rem;">0</div>
-                    </div>
-                    <div class="glass-panel" style="padding:1rem; text-align:center;">
-                        <div
-                            style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
-                            Flugstunden</div>
-                        <div id="stat-flight-hours"
-                            style="font-size:1.8rem; font-weight:700; color:var(--success); margin-top:0.25rem;">0h
+                <!-- Tab: Liste -->
+                <div id="panel-liste">
+                    <section class="log-section">
+                        <div class="section-title">
+                            <h2>Flugeinträge</h2>
+                            <span id="analyse-count" class="badge">0</span>
                         </div>
-                    </div>
-                    <div class="glass-panel" style="padding:1rem; text-align:center;">
-                        <div
-                            style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
-                            Besuchertage</div>
-                        <div id="stat-visitor-days"
-                            style="font-size:1.8rem; font-weight:700; color:var(--warning); margin-top:0.25rem;">0</div>
-                    </div>
-                    <div class="glass-panel" style="padding:1rem; text-align:center;">
-                        <div
-                            style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
-                            Aktive Piloten</div>
-                        <div id="stat-active-pilots"
-                            style="font-size:1.8rem; font-weight:700; color:var(--info, #38bdf8); margin-top:0.25rem;">0
+                        <div style="overflow-x:auto;">
+                            <table id="analyse-table" class="analyse-table"
+                                style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                                <thead>
+                                    <tr style="border-bottom:2px solid var(--surface-border); text-align:left;">
+                                        <th style="padding:0.6rem 0.5rem;">Datum</th>
+                                        <th style="padding:0.6rem 0.5rem;">Pilot</th>
+                                        <th style="padding:0.6rem 0.5rem;">Modell</th>
+                                        <th style="padding:0.6rem 0.5rem;">Start</th>
+                                        <th style="padding:0.6rem 0.5rem;">Ende</th>
+                                        <th style="padding:0.6rem 0.5rem;">Modelltyp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="analyse-tbody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">Filter anwenden um Einträge zu laden...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                </div>
+                    </section>
 
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem;">
-                    <div class="glass-panel" style="padding:1.25rem;">
-                        <h3 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;"><i
-                                class="fa-solid fa-user"></i> Flugstunden pro Pilot</h3>
-                        <div style="height: 250px; position: relative;">
-                            <canvas id="chart-pilot-hours"></canvas>
-                        </div>
-                    </div>
-                    <div class="glass-panel" style="padding:1.25rem;">
-                        <h3 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;"><i
-                                class="fa-solid fa-calendar-week"></i> Wochentag vs. Wochenende</h3>
-                        <div style="height: 250px; position: relative;">
-                            <canvas id="chart-weekday"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-panel" style="padding:1.25rem; margin-top:1.25rem;">
-                    <h3 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;"><i
-                            class="fa-solid fa-chart-line"></i> Flugstunden Verlauf</h3>
-                    <div style="height: 300px; position: relative;">
-                        <canvas id="chart-time-trend"></canvas>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Model Management View -->
-    <div id="view-models" class="view hidden">
-        <nav class="glass-nav">
-            <div class="nav-brand">
-                <button id="btn-back-dashboard" class="btn-icon" title="Zurück"><i
-                        class="fa-solid fa-arrow-left"></i></button>
-                <span>Meine Modelle</span>
-            </div>
-        </nav>
-
-        <main class="dashboard-content" style="max-width: 600px; margin: 0 auto;">
-            <section class="glass-card new-model-card">
-                <h2>Neues Modell anlegen</h2>
-                <form id="new-model-form">
-                    <div class="input-group">
-                        <input type="text" id="model-bezeichnung" placeholder="Bezeichnung (z.B. EasyGlider)" required>
-                    </div>
-                    <div class="input-group">
-                        <select id="model-typ" required>
-                            <option value="" disabled selected>Modelltyp...</option>
-                            <option value="motorflugzeug">Motorflugzeug</option>
-                            <option value="segelflugzeug">Segelflugzeug</option>
-                            <option value="hubschrauber">Hubschrauber</option>
-                            <option value="multikopter">Multikopter</option>
-                            <option value="luftschiff">Luftschiff</option>
-                            <option value="ballon">Ballon</option>
-                            <option value="gleitschirm">Gleitschirm</option>
-                            <option value="rakete">Rakete</option>
-                            <option value="sonstige">Sonstige</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <select id="model-antrieb" required>
-                            <option value="" disabled selected>Antriebsart...</option>
-                            <option value="elektro">Elektro</option>
-                            <option value="verbrenner">Verbrenner</option>
-                            <option value="turbine">Turbine</option>
-                            <option value="raketenantrieb">Raketenantrieb</option>
-                            <option value="ohne">Ohne Antrieb</option>
-                            <option value="sonstige">Sonstige</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <select id="model-gewichtsklasse" required>
-                            <option value="" disabled selected>Gewichtsklasse...</option>
-                            <option value="bis_250g">bis 250g</option>
-                            <option value="bis_2kg">bis 2kg</option>
-                            <option value="bis_4kg">bis 4kg</option>
-                            <option value="bis_12kg">bis 12kg</option>
-                            <option value="bis_25kg">bis 25kg</option>
-                            <option value="ueber_25kg">über 25kg</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <input type="text" id="model-frequenz" placeholder="Kanal / Funkfrequenz" value="2.4 GHz"
-                            required>
-                    </div>
-                    <div class="input-group">
-                        <input type="text" id="model-registriernummer" placeholder="Registriernummer (>25kg Optional)">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <i class="fa-solid fa-plus"></i> Modell hinzufügen
-                    </button>
-                </form>
-            </section>
-
-            <section class="log-section">
-                <div class="section-title">
-                    <h2>Gespeicherte Modelle</h2>
-                    <span id="models-count" class="badge">0</span>
-                </div>
-                <div id="models-list" class="flight-list">
-                    <!-- Populated by JS -->
-                    <div class="empty-state">Keine Modelle gefunden.</div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- User Management View -->
-    <div id="view-users" class="view hidden">
-        <nav class="glass-nav">
-            <div class="nav-brand">
-                <button id="btn-back-dashboard-from-users" class="btn-icon" title="Zurück"><i
-                        class="fa-solid fa-arrow-left"></i></button>
-                <span>Benutzerverwaltung</span>
-            </div>
-        </nav>
-
-        <main class="dashboard-content" style="max-width: 600px; margin: 0 auto;">
-            <section class="add-user-section glass-panel" style="margin-bottom: 2rem;">
-                <h2>Neuen Benutzer anlegen</h2>
-                <form id="new-user-form" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
-                    <div style="display: flex; gap: 1rem;">
-                        <div class="input-group" style="flex: 1;">
-                            <input type="text" id="new-user-vorname" placeholder="Vorname" required class="input">
-                        </div>
-                        <div class="input-group" style="flex: 1;">
-                            <input type="text" id="new-user-nachname" placeholder="Nachname" required class="input">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <input type="email" id="new-user-email" placeholder="E-Mail Adresse" required class="input">
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="new-user-password" placeholder="Passwort (Initial)" required
-                            class="input">
-                    </div>
-                    <div class="form-group"
-                        style="flex-direction: row; align-items: center; gap: 0.75rem; margin-top: 0.25rem;">
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="new-user-admin">
-                            <span class="toggle-slider"></span>
-                        </label>
-                        <label for="new-user-admin" style="font-weight:normal; font-size:0.9rem; cursor:pointer;">
-                            Admin-Rechte vergeben
-                        </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">
-                        <i class="fa-solid fa-user-plus"></i> Benutzer anlegen
-                    </button>
-                </form>
-            </section>
-
-            <section class="log-section">
-                <div class="section-title">
-                    <h2>Alle registrierten Benutzer</h2>
-                    <span id="users-count" class="badge">0</span>
-                </div>
-                <div id="users-list" class="flight-list" style="max-height: 70vh;">
-                    <!-- Populated by JS -->
-                    <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Lade...</div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- Admin Settings View -->
-    <div id="view-settings" class="view hidden">
-        <nav class="glass-nav">
-            <div class="nav-brand">
-                <button id="btn-back-dashboard-from-settings" class="btn-icon" title="Zurück"><i
-                        class="fa-solid fa-arrow-left"></i></button>
-                <span>System-Einstellungen</span>
-            </div>
-        </nav>
-
-        <main class="dashboard-content">
-            <section class="settings-section glass-card">
-                <h2>Allgemeine Einstellungen</h2>
-                <p class="subtitle" style="margin-bottom: 2rem; color: var(--text-secondary);">Hier können globale
-                    Parameter für den Flugplatz konfiguriert werden.</p>
-
-                <form id="settings-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    <div class="form-group">
-                        <label for="settings-flugplatz-name">Name des Flugplatzes</label>
-                        <div class="input-group">
-                            <i class="fa-solid fa-location-dot"></i>
-                            <input type="text" id="settings-flugplatz-name" placeholder="z.B. MFG Kitzingen e.V."
-                                required class="input">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="settings-adresse">Adresse / Standort</label>
-                        <div class="input-group">
-                            <i class="fa-solid fa-map-pin"></i>
-                            <input type="text" id="settings-adresse" placeholder="Straße, PLZ Ort" required
-                                class="input">
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--surface-border);">
-                        <button type="submit" class="btn btn-primary btn-large btn-block" id="btn-save-settings">
-                            <i class="fa-solid fa-save"></i> Einstellungen speichern
+                    <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:flex-end;">
+                        <button id="btn-analyse-export-csv" class="btn btn-secondary">
+                            <i class="fa-solid fa-file-csv"></i> CSV Export
+                        </button>
+                        <button id="btn-analyse-export-pdf" class="btn btn-secondary">
+                            <i class="fa-solid fa-file-pdf"></i> PDF Export
                         </button>
                     </div>
-                </form>
-            </section>
-        </main>
+                </div>
+
+                <!-- Tab: Statistiken -->
+                <div id="panel-statistik" class="hidden">
+                    <div class="stats-grid"
+                        style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+                        <div class="glass-panel" style="padding:1rem; text-align:center;">
+                            <div
+                                style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
+                                Flüge gesamt</div>
+                            <div id="stat-total-flights"
+                                style="font-size:1.8rem; font-weight:700; color:var(--primary); margin-top:0.25rem;">0
+                            </div>
+                        </div>
+                        <div class="glass-panel" style="padding:1rem; text-align:center;">
+                            <div
+                                style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
+                                Flugstunden</div>
+                            <div id="stat-flight-hours"
+                                style="font-size:1.8rem; font-weight:700; color:var(--success); margin-top:0.25rem;">0h
+                            </div>
+                        </div>
+                        <div class="glass-panel" style="padding:1rem; text-align:center;">
+                            <div
+                                style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
+                                Besuchertage</div>
+                            <div id="stat-visitor-days"
+                                style="font-size:1.8rem; font-weight:700; color:var(--warning); margin-top:0.25rem;">0
+                            </div>
+                        </div>
+                        <div class="glass-panel" style="padding:1rem; text-align:center;">
+                            <div
+                                style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
+                                Aktive Piloten</div>
+                            <div id="stat-active-pilots"
+                                style="font-size:1.8rem; font-weight:700; color:var(--info, #38bdf8); margin-top:0.25rem;">
+                                0
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem;">
+                        <div class="glass-panel" style="padding:1.25rem;">
+                            <h3 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;"><i
+                                    class="fa-solid fa-user"></i> Flugstunden pro Pilot</h3>
+                            <div style="height: 250px; position: relative;">
+                                <canvas id="chart-pilot-hours"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass-panel" style="padding:1.25rem;">
+                            <h3 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;"><i
+                                    class="fa-solid fa-calendar-week"></i> Wochentag vs. Wochenende</h3>
+                            <div style="height: 250px; position: relative;">
+                                <canvas id="chart-weekday"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel" style="padding:1.25rem; margin-top:1.25rem;">
+                        <h3 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;"><i
+                                class="fa-solid fa-chart-line"></i> Flugstunden Verlauf</h3>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="chart-time-trend"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Model Management View -->
+        <div id="view-models" class="view hidden">
+            <nav class="glass-nav">
+                <div class="nav-brand">
+                    <button id="btn-back-dashboard" class="btn-icon" title="Zurück"><i
+                            class="fa-solid fa-arrow-left"></i></button>
+                    <span>Meine Modelle</span>
+                </div>
+            </nav>
+
+            <main class="dashboard-content" style="max-width: 600px; margin: 0 auto;">
+                <section class="glass-card new-model-card">
+                    <h2>Neues Modell anlegen</h2>
+                    <form id="new-model-form">
+                        <div class="input-group">
+                            <input type="text" id="model-bezeichnung" placeholder="Bezeichnung (z.B. EasyGlider)"
+                                required>
+                        </div>
+                        <div class="input-group">
+                            <select id="model-typ" required>
+                                <option value="" disabled selected>Modelltyp...</option>
+                                <option value="motorflugzeug">Motorflugzeug</option>
+                                <option value="segelflugzeug">Segelflugzeug</option>
+                                <option value="hubschrauber">Hubschrauber</option>
+                                <option value="multikopter">Multikopter</option>
+                                <option value="luftschiff">Luftschiff</option>
+                                <option value="ballon">Ballon</option>
+                                <option value="gleitschirm">Gleitschirm</option>
+                                <option value="rakete">Rakete</option>
+                                <option value="sonstige">Sonstige</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <select id="model-antrieb" required>
+                                <option value="" disabled selected>Antriebsart...</option>
+                                <option value="elektro">Elektro</option>
+                                <option value="verbrenner">Verbrenner</option>
+                                <option value="turbine">Turbine</option>
+                                <option value="raketenantrieb">Raketenantrieb</option>
+                                <option value="ohne">Ohne Antrieb</option>
+                                <option value="sonstige">Sonstige</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <select id="model-gewichtsklasse" required>
+                                <option value="" disabled selected>Gewichtsklasse...</option>
+                                <option value="bis_250g">bis 250g</option>
+                                <option value="bis_2kg">bis 2kg</option>
+                                <option value="bis_4kg">bis 4kg</option>
+                                <option value="bis_12kg">bis 12kg</option>
+                                <option value="bis_25kg">bis 25kg</option>
+                                <option value="ueber_25kg">über 25kg</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="model-frequenz" placeholder="Kanal / Funkfrequenz" value="2.4 GHz"
+                                required>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="model-registriernummer"
+                                placeholder="Registriernummer (>25kg Optional)">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fa-solid fa-plus"></i> Modell hinzufügen
+                        </button>
+                    </form>
+                </section>
+
+                <section class="log-section">
+                    <div class="section-title">
+                        <h2>Gespeicherte Modelle</h2>
+                        <span id="models-count" class="badge">0</span>
+                    </div>
+                    <div id="models-list" class="flight-list">
+                        <!-- Populated by JS -->
+                        <div class="empty-state">Keine Modelle gefunden.</div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- User Management View -->
+        <div id="view-users" class="view hidden">
+            <nav class="glass-nav">
+                <div class="nav-brand">
+                    <button id="btn-back-dashboard-from-users" class="btn-icon" title="Zurück"><i
+                            class="fa-solid fa-arrow-left"></i></button>
+                    <span>Benutzerverwaltung</span>
+                </div>
+            </nav>
+
+            <main class="dashboard-content" style="max-width: 600px; margin: 0 auto;">
+                <section class="add-user-section glass-panel" style="margin-bottom: 2rem;">
+                    <h2>Neuen Benutzer anlegen</h2>
+                    <form id="new-user-form"
+                        style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                        <div style="display: flex; gap: 1rem;">
+                            <div class="input-group" style="flex: 1;">
+                                <input type="text" id="new-user-vorname" placeholder="Vorname" required class="input">
+                            </div>
+                            <div class="input-group" style="flex: 1;">
+                                <input type="text" id="new-user-nachname" placeholder="Nachname" required class="input">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <input type="email" id="new-user-email" placeholder="E-Mail Adresse" required class="input">
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="new-user-password" placeholder="Passwort (Initial)" required
+                                class="input">
+                        </div>
+                        <div class="form-group"
+                            style="flex-direction: row; align-items: center; gap: 0.75rem; margin-top: 0.25rem;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="new-user-admin">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <label for="new-user-admin" style="font-weight:normal; font-size:0.9rem; cursor:pointer;">
+                                Admin-Rechte vergeben
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">
+                            <i class="fa-solid fa-user-plus"></i> Benutzer anlegen
+                        </button>
+                    </form>
+                </section>
+
+                <section class="log-section">
+                    <div class="section-title">
+                        <h2>Alle registrierten Benutzer</h2>
+                        <span id="users-count" class="badge">0</span>
+                    </div>
+                    <div id="users-list" class="flight-list" style="max-height: 70vh;">
+                        <!-- Populated by JS -->
+                        <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Lade...</div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Admin Settings View -->
+        <div id="view-settings" class="view hidden">
+            <nav class="glass-nav">
+                <div class="nav-brand">
+                    <button id="btn-back-dashboard-from-settings" class="btn-icon" title="Zurück"><i
+                            class="fa-solid fa-arrow-left"></i></button>
+                    <span>System-Einstellungen</span>
+                </div>
+            </nav>
+
+            <main class="dashboard-content" style="max-width: 600px; margin: 0 auto;">
+                <section class="settings-section glass-card">
+                    <h2>Allgemeine Einstellungen</h2>
+                    <p class="subtitle" style="margin-bottom: 2rem; color: var(--text-secondary);">Hier können globale
+                        Parameter für den Flugplatz konfiguriert werden.</p>
+
+                    <form id="settings-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label for="settings-flugplatz-name">Name des Flugplatzes</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <input type="text" id="settings-flugplatz-name" placeholder="z.B. MFG Kitzingen e.V."
+                                    required class="input">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="settings-adresse">Adresse / Standort</label>
+                            <div class="input-group">
+                                <i class="fa-solid fa-map-pin"></i>
+                                <input type="text" id="settings-adresse" placeholder="Straße, PLZ Ort" required
+                                    class="input">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--surface-border);">
+                            <button type="submit" class="btn btn-primary btn-large btn-block" id="btn-save-settings">
+                                <i class="fa-solid fa-save"></i> Einstellungen speichern
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </main>
+        </div>
+
     </div>
 
     <!-- Notification Toast -->
