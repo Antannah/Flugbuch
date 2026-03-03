@@ -219,11 +219,10 @@ Eine **moderne Web-App** als Ersatz, die:
 │  │Peter │⛑ FL   │08:00  │10:00  │⚪ fertig│    │
 │  └──────┴────────┴───────┴───────┴────────┘    │
 │                                                 │
-│           [ 📄 CSV ]  [ 📄 PDF ] (nur Admin)    │
 └─────────────────────────────────────────────────┘
 ```
 
-> **Hinweis:** Die Datumsauswahl entfällt auf der Hauptseite – es wird immer das aktuelle Datum ("heute") verwendet. Für nachträgliche Einträge steht der Button **"Zeit nachmelden"** zur Verfügung, der ein Formular mit Datum, Startzeit und Endzeit aufklappt.
+> **Hinweis:** Die Datumsauswahl entfällt auf der Hauptseite – es wird immer das aktuelle Datum ("heute") verwendet. Für nachträgliche Einträge steht der Button **"Zeit nachmelden"** zur Verfügung, der ein Formular mit Datum, Startzeit und Endzeit aufklappt. Die Einträge sind **absteigend nach Startzeit** sortiert (jüngste oben). Export-Funktionen befinden sich in der **Analyse-Ansicht** (siehe 4.4).
 
 ### 4.2 Formular-Felder im Detail
 
@@ -249,6 +248,36 @@ stateDiagram-v2
     Editieren --> Aktiv : Änderungen gespeichert
     Abgemeldet --> [*]
 ```
+
+### 4.4 Analyse-Ansicht (nur Admin)
+
+Über einen **📈-Button** in der Navigationsleiste (nur für Admins sichtbar) gelangt man zur Analyse-Ansicht.
+
+```
+┌─────────────────────────────────────────────────┐
+│  ← Analyse                                      │
+│─────────────────────────────────────────────────│
+│                                                 │
+│  Suche: [________]  Von: [____]  Bis: [____]   │
+│                              [ 🔍 Filtern ]     │
+│                                                 │
+│  ── Flugeinträge ────────────── [42]            │
+│  ┌──────┬──────┬────────┬─────┬─────┬────────┐ │
+│  │Datum │Pilot │Modell  │Start│Ende │Typ     │ │
+│  ├──────┼──────┼────────┼─────┼─────┼────────┤ │
+│  │03.03.│Max M.│Zephyr  │10:30│12:15│Modell  │ │
+│  │03.03.│Peter │⛑ FL   │08:00│10:00│FL      │ │
+│  └──────┴──────┴────────┴─────┴─────┴────────┘ │
+│                                                 │
+│                    [ 📄 CSV ]  [ 📄 PDF ]       │
+└─────────────────────────────────────────────────┘
+```
+
+**Funktionen:**
+- **Suchfeld:** Filtert nach Pilotname oder Modellbezeichnung
+- **Datumsbereich:** Von/Bis-Filter für tages- oder zeitraumübergreifende Auswertung
+- **Tabellenansicht:** Alle Flugeinträge in tabellarischer Form
+- **CSV/PDF-Export:** Buttons zum Export der gefilterten Daten
 
 ---
 
@@ -385,11 +414,28 @@ Analog zur MFSD-App kann ein Modell-Eintrag als **Sammel-Eintrag** dienen:
 
 | Format | Zweck |
 |---|---|
-| **PDF** | Druckbares Flugbuch, analog zum MFSD-PDF-Export |
-| **CSV** | Maschinenlesbar, zur Weiterverarbeitung |
+| **PDF** | Druckbares Flugbuch, Querformat A4 |
+| **CSV** | Maschinenlesbar, Semikolon-getrennt, UTF-8 mit BOM |
+
+### 8.2 Export-Spalten
+
+| Spalte | Beschreibung |
+|---|---|
+| Datum | Flugtag |
+| Start | Startzeit |
+| Ende | Endzeit |
+| Pilot | Vor- und Nachname |
+| Schulungsnachweis | Ja/Nein |
+| Flugleiter | Ja/Nein |
+| Modell | Modellbezeichnung |
+| Antrieb | Antriebsart |
+| Gewichtsklasse | Gewichtsklasse des Modells |
+| Frequenz | Funkfrequenz (z.B. 2.4 GHz) |
+| Reg.Nr. >25kg | UAS-Registriernummer (wenn >25kg) |
+| Bemerkung | Besonderes Ereignis |
 
 
-### 8.2 FBD-Import (optional, Phase 2)
+### 8.3 FBD-Import (optional, Phase 2)
 
 Für die Migration bestehender Daten aus der MFSD-App:
 - Import-Endpunkt für `.fbd`-Dateien (XML)
