@@ -311,6 +311,7 @@ class FlugbuchApp {
                 if (!this.profileMenu.classList.contains('hidden')) {
                     document.getElementById('profile-vorname').value = this.currentUser.vorname;
                     document.getElementById('profile-nachname').value = this.currentUser.nachname;
+                    document.getElementById('profile-email').value = this.currentUser.email || '';
                     document.getElementById('profile-schulung').checked = this.currentUser.hat_schulungsnachweis || false;
                     document.getElementById('profile-flugordnung').checked = this.currentUser.hat_flugordnung_bestaetigt || false;
                 }
@@ -1010,24 +1011,40 @@ class FlugbuchApp {
     // --- User Management Logic ---
     async handleCreateUser(e) {
         e.preventDefault();
-        const isAdmin = document.getElementById('new-user-admin').checked;
         const payload = {
             vorname: document.getElementById('new-user-vorname').value,
             nachname: document.getElementById('new-user-nachname').value,
-            email: document.getElementById('new-user-email').value,
-            passwort: document.getElementById('new-user-password').value,
-            rolle: isAdmin ? 'admin' : 'pilot',
-            hat_schulungsnachweis: false
+            email: document.getElementById('new-user-email').value
         };
+
+        const passwordInput = document.getElementById('new-user-password').value;
+        if (passwordInput) {
+            payload.passwort = passwordInput;
+        }
 
         const btn = this.newUserForm.querySelector('button[type="submit"]');
         btn.disabled = true;
 
         try {
-            await api.createUser(payload);
-            window.AppUtils.showToast('Benutzer angelegt', 'success');
+            if (this.editingUserId) {
+                // If editing, we also preserve the user's previous schulungsnachweis states (we don't overwrite them here)
+                await api.updateUserProfile(this.editingUserId, payload);
+                window.AppUtils.showToast('Benutzer erfolgreich aktualisiert', 'success');
+                this.editingUserId = null;
+                btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Benutzer anlegen';
+                document.querySelector('.add-user-section h2').textContent = 'Benutzerdaten';
+                document.getElementById('new-user-password').required = true;
+            } else {
+                payload.rolle = 'pilot'; // default role for new users
+                payload.hat_schulungsnachweis = false;
+                await api.createUser(payload);
+                window.AppUtils.showToast('Benutzer angelegt', 'success');
+            }
             this.newUserForm.reset();
             this.renderUsersView();
+
+            // Scroll to list
+            this.usersListEl.scrollIntoView({ behavior: 'smooth' });
         } catch (error) {
             window.AppUtils.showToast('Fehler: ' + error.message, 'error');
         } finally {
@@ -1055,24 +1072,23 @@ class FlugbuchApp {
                             ${u.vorname} ${u.nachname} ${isMe ? '(Ich)' : ''}
                         </div>
                         <div class="flight-model">
-                            <span class="badge" style="background:rgba(255, 255, 255, 0.1); color:var(--text-secondary);">${u.email || 'Keine E-Mail'}</span>
-                            ${isAdmin ? '<span class="badge status-active">ADMIN</span>' : ''}
+                            <span style="color:var(--text-secondary); font-size: 0.85rem;">${u.email || 'Keine E-Mail'}</span>
                         </div>
                     </div>
-                    ${!isMe ? `
                     <div style="display:flex; gap:0.5rem; align-items:center;">
                         <label class="toggle-switch" title="Admin-Rechte">
                             <input type="checkbox" class="admin-toggle" data-id="${u.id}" ${isAdmin ? 'checked' : ''}>
                             <span class="toggle-slider"></span>
                         </label>
                         <span style="font-size:0.75rem; color:var(--text-secondary); min-width:2.5rem;">Admin</span>
-                        <button class="btn-icon btn-password-change" data-id="${u.id}" title="Passwort ändern" style="color:var(--warning)">
-                            <i class="fa-solid fa-key"></i>
+                        
+                        <button class="btn-icon btn-edit-user" data-id="${u.id}" data-user='${JSON.stringify({ vorname: u.vorname, nachname: u.nachname, email: u.email, rolle: u.rolle, hat_schulungsnachweis: u.hat_schulungsnachweis, hat_flugordnung_bestaetigt: u.hat_flugordnung_bestaetigt }).replace(/'/g, "&#39;")}' title="${isMe ? 'Eigene Daten bearbeiten' : 'Benutzer bearbeiten'}" style="color:var(--primary)">
+                            <i class="fa-solid fa-pen"></i>
                         </button>
                         <button class="btn-icon btn-delete-user" data-id="${u.id}" title="Benutzer löschen" style="color:var(--danger)">
                             <i class="fa-solid fa-trash"></i>
                         </button>
-                    </div>` : '<span style="color:var(--text-secondary); font-size:0.8rem">Keine Aktion</span>'}
+                    </div>
                 `;
                 this.usersListEl.appendChild(item);
             });
@@ -1090,6 +1106,30 @@ class FlugbuchApp {
                         window.AppUtils.showToast(err.message, 'error');
                         this.renderUsersView();
                     }
+                });
+            });
+
+            // Bind edit user
+            this.usersListEl.querySelectorAll('.btn-edit-user').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.currentTarget.dataset.id;
+                    const userData = JSON.parse(e.currentTarget.dataset.user);
+
+                    this.editingUserId = id;
+
+                    document.getElementById('new-user-vorname').value = userData.vorname;
+                    document.getElementById('new-user-nachname').value = userData.nachname;
+                    document.getElementById('new-user-email').value = userData.email || '';
+
+                    // Password shouldn't be required when updating
+                    document.getElementById('new-user-password').required = false;
+
+                    const formBtn = this.newUserForm.querySelector('button[type="submit"]');
+                    formBtn.innerHTML = '<i class="fa-solid fa-save"></i> Benutzer ändern';
+                    document.querySelector('.add-user-section h2').textContent = 'Benutzer bearbeiten';
+
+                    // Scroll to form
+                    this.newUserForm.scrollIntoView({ behavior: 'smooth' });
                 });
             });
 
@@ -1189,16 +1229,19 @@ class FlugbuchApp {
     async handleSaveProfile() {
         const vorname = document.getElementById('profile-vorname').value.trim();
         const nachname = document.getElementById('profile-nachname').value.trim();
-        if (!vorname || !nachname) {
-            window.AppUtils.showToast('Bitte Vor- und Nachname eingeben', 'error');
+        const email = document.getElementById('profile-email').value.trim();
+
+        if (!vorname || !nachname || !email) {
+            window.AppUtils.showToast('Bitte Vorname, Nachname und E-Mail eingeben', 'error');
             return;
         }
         try {
             const schulung = document.getElementById('profile-schulung').checked;
             const flugordnung = document.getElementById('profile-flugordnung').checked;
-            const updated = await api.updateOwnProfile({ vorname, nachname, hat_schulungsnachweis: schulung, hat_flugordnung_bestaetigt: flugordnung });
+            const updated = await api.updateOwnProfile({ vorname, nachname, email, hat_schulungsnachweis: schulung, hat_flugordnung_bestaetigt: flugordnung });
             this.currentUser.vorname = updated.vorname;
             this.currentUser.nachname = updated.nachname;
+            this.currentUser.email = updated.email;
             this.currentUser.hat_schulungsnachweis = updated.hat_schulungsnachweis;
             this.currentUser.hat_flugordnung_bestaetigt = updated.hat_flugordnung_bestaetigt;
             localStorage.setItem('flugbuch_user', JSON.stringify(this.currentUser));

@@ -229,6 +229,13 @@ class ApiClient {
         });
     }
 
+    async updateUserProfile(id, data) {
+        return this.request(`/users/${id}/profil`, {
+            method: 'PUT',
+            body: data
+        });
+    }
+
     // Self-service profile
     async updateOwnProfile(data) {
         return this.request('/users/me/profil', {

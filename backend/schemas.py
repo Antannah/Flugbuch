@@ -76,6 +76,7 @@ class UserPasswordUpdate(BaseModel):
 class UserProfileUpdate(BaseModel):
     vorname: str
     nachname: str
+    email: EmailStr
     hat_schulungsnachweis: bool = False
     hat_flugordnung_bestaetigt: bool = False
 
