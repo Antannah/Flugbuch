@@ -5,3 +5,4 @@ venv312/
 __pycache__/
 *.csv
 *.pdf
+deploy_bundle.tar

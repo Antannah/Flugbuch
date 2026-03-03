@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from database import engine, Base
 import models
 import schemas
@@ -23,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+@app.get("/api/health")
 def read_root():
     return {"status": "ok", "message": "MFG Kitzingen Flugbuch API läuft"}
 
@@ -33,3 +35,8 @@ app.include_router(users.router)
 app.include_router(modelle.router)
 app.include_router(gelaende.router)
 app.include_router(flugeintraege.router)
+
+# Mount frontend
+frontend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend")
+if os.path.exists(frontend_dir):
+    app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
