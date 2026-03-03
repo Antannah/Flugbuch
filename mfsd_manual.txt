@@ -1,0 +1,1647 @@
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 1 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+ 
+Handbuch zur Flugbuch-App des MFSD 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 2 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Inhaltsverzeichnis 
+ 
+1. 
+Einleitung ........................................................................................................................................ 3 
+2. 
+Kurzanleitung ................................................................................................................................... 7 
+3. 
+Vorbemerkung ............................................................................................................................... 10 
+4. 
+Installation ..................................................................................................................................... 11 
+5. 
+Erstkonfiguration ........................................................................................................................... 12 
+5.1 
+Einrichtungsassistent (ab V. 4.0.0.0.) .................................................................................... 12 
+5.2 
+Weitere Stammdaten hinzufügen ......................................................................................... 15 
+5.3 
+Anlage des Piloten ................................................................................................................. 17 
+5.4 
+Anlage des Geländes ............................................................................................................. 18 
+5.5 
+Anlage eines Modells............................................................................................................. 20 
+6. 
+FTP-Export ..................................................................................................................................... 21 
+7. 
+Flüge loggen .................................................................................................................................. 24 
+7.1  APP- / Sprach-Einstellungen (erweitert ab V 1.2.5.0 ff) ............................................................. 29 
+7.2  Multi-Modellauswahl (ab V 1.2.4.0) ........................................................................................... 31 
+8. 
+Flüge editieren ............................................................................................................................... 32 
+9. 
+Flugleiterdienst .............................................................................................................................. 33 
+10. 
+Im- und Export ........................................................................................................................... 34 
+10.1  Besonderheiten unter Windows – Startparameter (ab V 1.2.4.0) ........................................... 40 
+11. 
+Stammdaten Import unter iOS .................................................................................................. 43 
+12. 
+Hinweise .................................................................................................................................... 45 
+a. 
+Plattformen ............................................................................................................................... 45 
+b. 
+Wer hat Datenzugriff? ............................................................................................................... 45 
+c. 
+Betriebsmöglichkeiten ............................................................................................................... 45 
+d. 
+Datenschutz (Details siehe Datenschutzerklärung!) ................................................................. 45 
+e. 
+Copyright ................................................................................................................................... 46 
+f. 
+Support ...................................................................................................................................... 46 
+g. 
+Danksagung ............................................................................................................................... 46 
+Anhang .................................................................................................................................................. 48 
+1) 
+PDF-Export des Flugbuchs: ........................................................................................................ 48 
+2) 
+Beispiel aus der Liste der QR-Codes (vordefinierte Modelle): .................................................. 48 
+3) 
+Abmeldung des Piloten per QR-Code: ....................................................................................... 48 
+4) 
+Datenschutzerklärung (folgende Seiten) ................................................................................... 48 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 3 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+1. Einleitung 
+Die „Standardisierten Regeln für Flugmodelle“ (StRfF) des MFSD 
+ermöglichen die Führung eines Flugbuchs in elektronischer Form parallel 
+oder alternativ zu einer handschriftlichen Führung des Flugbuches. 
+Die Software ermöglicht wahlweise die Erfassung des Flugbetriebs eines 
+Piloten, die Erfassung des Betriebes einzelner Modelle, die Erfassung von 
+Einzelflügen von Modellen, Betriebszeiten einzelner Modelle, die 
+Sammelanmeldung mehrerer Modelle sowie die Erfassung des 
+Flugleiterbetriebs.  
+Die Art der Anmeldung kann dabei beliebig gemischt werden. Ferner 
+ermöglicht die Software die Auswertung der Meldungen verschiedener 
+Piloten auch von verschiedenen Standorten einer Gruppe oder eines 
+Vereins und die Generierung eines chronologischen Flugbuches  aus 
+diesen Daten, die bei Online-Betrieb allen Teilnehmern in Echtzeit auch 
+als Druckversion verfügbar gemacht werden kann. Ferner ermöglicht die 
+Software die Übermittlung der persönlichen Daten an einen Piloten zur 
+privaten Verwendung und Auswertung. Ebenso ist die nachträgliche 
+Übernahme von Daten aus einem parallel in Papierform geführten 
+Flugbuch möglich. 
+Sie nutzt die Internetverbindung des Gerätes auf der sie läuft. Das kann 
+also LAN, WLAN, Bluetooth oder Mobilfunk sein. Welche Verbindungsart 
+genutzt wird, hängt von den Einstellungen des verwendeten Gerätes ab. 
+Die Software hat selber keinen Einfluss darauf. 
+Die Software versendet automatisch keinerlei Daten. Der Export von 
+Daten unterliegt immer der vollständigen Kontrolle des Users und muss 
+von diesem aktiv eingeleitet werden.  
+Es gibt zwei Möglichkeiten des Versandes der Daten. Einmal per E-Mail 
+und einmal per FTP. Für den E-Mail Versand ist ein Standard-Email Konto 
+notwendig, für den Versand via FTP ein FTP-Account auf einem 
+entsprechenden Server. Der Versand via FTP ist die zu bevorzugende 
+Methode, da wesentlich schneller und einfacher. Solche Accounts sind im 
+Rahmen von Web-Präsenzen normalerweise verfügbar. Es können aber 
+auch dezidierte Accounts bei einem Service-Provider oder eigene, im 
+Internet erreichbare Server genutzt werden. Die Wahl des Servers ist 
+beliebig, solange dieser erreichbar ist. Die Daten werden also an ein 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 4 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+durch den Nutzer unter dessen vollständiger Kontrolle frei definierbares 
+Ziel versendet.  
+Versendet werden Name des Piloten, Zeit des Betriebs, Ort des Betriebs. 
+Antriebsart des Modells/der Modelle, eine Info über das Vorhandensein 
+eines Schulungsnachweises, Flugleitertätigkeit sowie die Unterschrift des 
+Piloten. Diese Daten können in den Formaten FBD (internes Format), CSV 
+oder PDF exportiert werden. 
+Wer hat Zugriff auf die Daten ? 
+Zunächst mal natürlich der User auf seinem Gerät. Ferner alle die, an die 
+der User seine Daten unter seiner Kontrolle sendet. Also z.B. der eigene 
+Verein. Die Daten liegen temporär in passwortgeschützten Bereichen der 
+E-Mail oder FTP-Server. 
+Innerhalb eines Vereins oder einer Gruppe können alle Teilnehmer alle 
+Einträge im Flugbuch sehen. Das ist ja auch der Sinn eines Flugbuchs. 
+Eine Weitergabe an externe Parteien findet nicht statt. Zugriff auf die 
+Daten haben also nur die Mitglieder des Vereins oder der Gruppe. 
+Gastflieger können ebenfalls Zugriff auf das System erhalten, der aber 
+auf die Dauer des aktuellen Tages beschränkt ist. 
+Die Software ist allgemein verfügbar, verbandsunabhängig und 
+kostenlos. Sie kann zu nicht-kommerziellen Zwecken genutzt werden. Es 
+handelt sich um ein Programm von Modellfliegern für Modellflieger, das 
+als reines Freizeitprojekt entstanden ist. 
+Auf welchen Plattformen ist die Software verfügbar ? 
+Für Android, Windows und iOS 16. 
+Installation der Software 
+Die Software erfordert unter Windows keine Installation und ist, wenn 
+z.B. auf einem USB-Stick eingerichtet, vollständig portabel. 
+Unter Android gilt das normale Prozedere der Installation von APK´s. 
+Allerdings muss in den Sicherheitseinstellung die Installation aus 
+unbekannten Quellen freigegeben sein solange die App noch nicht über 
+den Playstore verfügbar ist. 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 5 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Betrieb der Software 
+Es gibt die Möglichkeiten des zentralen und des dezentralen Betriebs.  
+Bei zentralem Betrieb wird am Platz ein einziges Gerät verwendet, auf 
+dem alle Einträge vorgenommen werden. Dazu ist keine 
+Onlineverbindung notwendig, kann aber genutzt werden, wenn 
+vorhanden. 
+Bei dezentralem Betrieb ist eine Onlineverbindung notwendig. Dabei 
+muss nicht jeder Pilot ein eigenes Gerät zur Verfügung haben. Die 
+Einträge für jeden Piloten können von jedem Gerät aus vorgenommen 
+werden. Bei bestehender Onlineverbindung ist auch der Mischbetrieb 
+eines oder mehrerer zentraler und individueller Geräte möglich. 
+Es gibt eine Zugangsmöglichkeit für Gastpiloten, damit diese auch vom 
+eigenen Gerät aus arbeiten können. Die Dauer des Zugriffs ist aber auf 
+einen Tag beschränkt und der Gastpilot hat bei der bevorzugten 
+Methode FTP keinen Zugriff auf Passwörter. 
+Datenübertragung und Speicherung 
+Um die gesammelten Daten allen Teilnehmern verfügbar zu machen, 
+werden diese an einer zentralen Stelle gesammelt. Die Software bietet 
+die Möglichkeit, das entweder auf einem FTP- oder E-Mailserver zu tun. 
+Bei Verwendung eines E-Mailservers kann allerdings vor Ort unter 
+Android kein aktuelles Flugbuch automatisiert in Echtzeit erstellt werden. 
+Das zu bevorzugende Verfahren ist daher FTP. Es besteht außerdem die 
+Möglichkeit, das ein Pilot ein einfaches persönliches Log führt. Die dort 
+anfallenden Daten sind nur für ihn zugänglich. 
+Der Speicherort kann durch den Anwender, also den Verein, die Gruppe 
+oder einer Einzelperson frei gewählt werden. Die Software erfordert 
+lediglich, dass der Speicherort FTP oder E-Mail beherrscht. Es können sich 
+auch mehrere Anwender zusammentun und einen gemeinsamen Server 
+benutzen. Wenn kein Server vorhanden ist, entstehen dadurch zwar 
+Kosten, die sich aber mit ca. 4€ / Monat in sehr engen Grenzen halten. 
+Dafür bekommt man alles das, was die Software braucht und noch 
+einiges mehr. Bei Nutzung eines zentralen Gerätes entfallen auch diese 
+Kosten. Das übertragene Datenvolumen ist gering, so dass das 
+Datenkontingent des verwendeten Gerätes nicht wesentlich belastet 
+wird. 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 6 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Es werden keine Daten an externe Stellen weitergegeben. Zugriff auf die 
+Daten haben nur die Mitglieder der jeweiligen Nutzergruppe. 
+Informationen über Flugbeschränkungen  in geografischen Gebieten 
+Im Betrieb auf der „grünen Wiese“ ist die Führung eines Flugbuches nicht 
+obligatorisch. Das Programm kann aber als persönliches Log eingesetzt 
+werden. Um in Echtzeit Informationen über eventuelle Beschränkungen 
+am Flugort zu bekommen, ermöglicht die Software den direkten Zugriff 
+auf die Digitale Plattform Unbemannte Luftfahrt (dipul). Das ist die 
+offizielle Karte des Bundesministeriums für Digitales und Verkehr der 
+Beschränkungen in geografischen Gebieten. Diese Beschränkungen 
+gelten nicht 1:1 für den Modellflug. Trotzdem ist es hilfreich solche 
+Informationen abrufen zu können. Die Nutzung dieser Funktion setzt 
+eine Onlineverbindung ins Netz voraus.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 7 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+2. Kurzanleitung 
+ 
+(1) Vorgaben für neuen Eintrag  
+(2) Modell- / Flugleiter-Eintrag  
+    starten/beenden  
+(3) Auflistung erfasster Einträge  
+(4) Export erfasster Einträge  
+(5) Menü öffnen/schließen  
+(6) QR-Code scannen (iOS / Android) 
+ 
+ 
+ 
+ 
+ 
+ 
+Wenn der Button <Anmelden> geklickt wird dann erscheint die Ansicht 
+der Flugbucheintragung.  
+ 
+ (7) Datum 
+(8) Startzeit 
+(9) Endzeit 
+(10) Bemerkungen  
+(11) Modelldetails  
+(12)  Zum 
+Modelleditor 
+(13) Modelleditor 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 8 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Flugleitertätigkeit: 
+Auf den Karteireiter (14) „Flugleiter“ und auf 
+den Start Button klicken.  
+Sind mehrere Personen als Flugleiter eingeteilt, 
+oben rechts den <Pilot> auswählen und erneut 
+auf den Start Button klicken. Soll die 
+Flugleitertätigkeit beendet werden oben rechts 
+den <Pilot> auswählen und auf den „Stop“ 
+Button klicken.  
+Bestätige die folgende Abfrage mit „Ja“. 
+ 
+ 
+ 
+Export: 
+Um erfasste Einträge an den Verein zu senden 
+klicke im Hauptbildschirm auf den Button (4). 
+Der Regelexport sollte per FTP auf den 
+Vereinsserver erfolgen (<SFTP-Upload>)! 
+Hierbei wird nur die FBD-Datei kopiert und es 
+braucht nichts markiert werden. 
+Beim eMail-Export unter „Email An:“ die 
+Emailadresse des Vereins eintragen, die Option 
+„FBD-Export“ wählen und auf den Button <E-
+Mail Export> klicken .  
+Es öffnet sich das installierte Emailprogramm. 
+Man kann auch ein PDF Dokument erstellen 
+oder die Daten als CSV Datei exportieren. Wenn man mehr als eine Export-
+Option wählt kann man die Formate in einer ZIP Datei zusammenfassen. Zur 
+Kontrolle der Eingaben einfach nur die Option „PDF anzeigen“ anklicken. Die 
+Exportdateien (PDF, CSV und FBD) werden zusätzlich im Exportordner des 
+Programms gespeichert. Unter Android findet man die Daten im Ordner 
+„Download/Flugbuch/Export“. 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 9 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Sollte das eMail Programm nicht automatisch öffnen die Dateien von hier 
+manuell anhängen und versenden (abhängig vom eMail-Client). 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 10 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+3. Vorbemerkung 
+Windows: 
+Unter Windows wird die Flugbuch.exe gestartet. Dabei erfolgt evtl. 
+folgende Abfrage: 
+ 
+    
+ 
+ 
+Hier kann bedenkenlos auf „Weitere Informationen“ und dann auf 
+„Trotzdem ausführen“ geklickt werden, auch wenn dort „Herausgeber: 
+Unbekannt“ steht.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 11 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+4. Installation 
+ 
+Android: Die APP ist über den Google PlayStore frei verfügbar.  
+ 
+Unter Windows starten Sie den Installer und folgen den Anweisungen. 
+ 
+Tipp: Nicht direkt auf C:\ speichern. Ggf. gibt es Probleme wenn in 
+schreibgeschützten Bereichen gearbeitet wird. In diesem Fall erscheint 
+diese Fehlermeldung: 
+ 
+ 
+Fehlerbild bei falscher Installation 
+ 
+Diese Fehlermeldung erscheint auch, wenn die .exe direkt aus dem ZIP-
+Archiv gestartet wird. Also immer erst entpacken. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 12 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+5. Erstkonfiguration 
+Mit dem Start der App landet man im Hauptbildschirm: 
+          
+ 
+       Bei abweichendem Datum kann mit „Heute“  
+       zurück gesprungen werden. 
+ 
+5.1  Einrichtungsassistent (ab V. 4.0.0.0.) 
+Der Einrichtungsassistent hilft bei der Erstkonfiguration für die 
+grundlegenden Stammdaten. Diese Funktion erscheint nur, wenn noch 
+keine Stammdaten angelegt wurden. Bitte die Abfrage zum Start des 
+Assistenten „JA“ antippen und anschließend die Sprache wählen und 
+„weiter“ tippen.  
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 13 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+          
+ 
+ 
+Zunächst trägt sich der Nutzer als Pilot in die Stammdaten ein. Eine 
+Unterschrift ist möglich, aber nicht vorgeschrieben (optional). 
+ 
+         
+ 
+ 
+Insbesondere die Anlage des Geländes ist wichtig, soweit der Verein eine 
+Geländebezeichnung und ggf. einen SFTP-Server vorgeben möchte 
+(empfohlen!), damit alle Vereinsmitglieder einen einheitlichen Ort 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 14 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+nutzen (sehr wichtig!). Dazu gibt der Verein einen QR-Code heraus, der 
+vom Einrichtungsassistenten gescannt wird (Kameraberechtigung 
+erforderlich! (wird ggf. abgefragt – bitte bestätigen)). 
+ 
+ 
+Hat man (noch keinen QR-Code vom Verein) kann man ein Gelände 
+„außerhalb Vereinsgelände“ („grüne Wiese“) wählen und das 
+Vereinsgelände später über das Menü ergänzen. „fertig“ tippen. Hat man 
+die 1. Option gewählt, wird die Kamera gestartet um den QR-Code zu 
+scannen. Im Anschluss öffnet sich die Hauptansicht der App. 
+ 
+         
+ 
+ 
+Als Modell wird ein „temp. Modell“ in den Stammdaten vorgegeben. 
+Dieses ist als Motorflugzeug, elektrisch bis 12 kg vorbelegt. Die Angaben 
+können mit einem neuen Flugbucheintrag an das aktuelle Modell 
+angepasst werden („Details“ tippen). Wer weitere Modelle fest 
+definieren möchte … siehe ab Kapitel 5.5:  
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 15 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+5.2  Weitere Stammdaten hinzufügen 
+Über das Menü können weitere Stammdaten angelegt werden.  
+Wichtig: Es bietet sich an, dass der Verein eine Geländebezeichnung 
+vorgibt, damit die Geländebezeichnungen aller Meldungen aus dem 
+Verein identisch lauten. Dazu ist dringend empfohlen, dass der Verein 
+einen QR-Code zu Beginn der Arbeit mit der App aushändigt (Erklärung 
+folgt in Kapitel 5.4). 
+Des Weiteren werden die Piloten angelegt. Möchte man die 
+vorgegebenen Stammdaten nicht haben (kleiner V. 4.0.0.0.), editiert man 
+diese über die Editierfunktion im Menü. Hat man dies einmal gemacht, 
+kann man die Stammdaten exportieren und auf anderen Geräten 
+importieren, damit erfolgt die Anlage nur einmal. So kann der Verein z.B. 
+alle Mitglieder für das Flugbuch in die Auswahl aufnehmen. Hierzu 
+besteht außerdem die Möglichkeit des Imports aus der 
+Mitgliederverwaltung des Vereins über eine definierte CSV Datei.  
+Der jeweilige Pilot selektiert auf seinem Smartphone entsprechend den 
+eigenen Namen. Somit sind auch Einträge für andere Piloten (ohne 
+Smartphone) an jedem Smartphone möglich.  
+Die Anlage der Modelle bietet die Option Modelle zu einer Gruppe 
+zusammenzufassen, da für die Vorgabe im Flugbuch z.B. nur die 
+schwerste Gewichtsklasse relevant ist, die zum Einsatz kommen soll. Die 
+Antriebsarten können als Mehrfachauswahl hinzugefügt werden. So 
+reicht für die minimalen Anforderungen gem. StRfF ein Eintrag pro Pilot 
+pro Tag. 
+Auf Wunsch kann auch jedes Modell einzeln angelegt und geloggt 
+werden. Über eine Timer-Funktion ist es zusätzlich möglich einzelne 
+Flüge zu loggen – z.B. als Bordbuch für Großmodelle. Als reine Stopp-Uhr 
+ist der Timer nicht gedacht, da jeder Flug zum Verein exportiert würde.  
+Über die drei „Punkte“ oben rechts in der Ecke vom Bildschirm gelangt 
+man jederzeit in ein Auswahlmenü: 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 16 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+ 
+Von dort können Einträge angelegt, bearbeitet oder gelöscht werden.  
+Über das Menü erfolgt außerdem der Import der Daten, die unter 
+Download/Flugbuch/Import im Smartphone abgelegt wurden (also zum 
+Beispiel vorher exportierter Daten oder Stammdaten zur 
+Datenwiederherstellung). 
+Es empfiehlt sich für den Verein einen FTP-Server bereit zu stellen, da 
+hierüber der effektivste Weg der Flugbuchführung erfolgt. Für den FTP-
+Server können über den Menüpunkt „FTP Zugangsdaten“ diese 
+eingegeben werden. Ab Version V. 3.0.0.0. kann für jedes Gelände ein 
+separater FTP-Server eingerichtet werden. Soll weiterhin nur ein Server 
+für alle Gelände genutzt werden, sind die Zugangsdaten als „Standard“ zu 
+hinterlegen.  
+„Unifly dipul“ bieten einen online Zugang zum Kartenmaterial des BMDV 
+für die Luftraumbeschränkungen als Link über einen Browser. 
+„App-Info“ enthält u.a. die aktuelle Versionsnummer. Bitte immer die 
+aktuellste Version nutzen. 
+ 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 17 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+5.3 Anlage des Piloten 
+ 
+               
+ 
+ 
+Die Angaben zum Piloten sind auf die notwendigen Angaben 
+beschränkt. Sofern vorhanden immer den Schulungsnachweis 
+anhaken. Für die optionale Unterschrift klickt man unten links auf  
+„Unterschrift >“ und kann diese im folgenden Fenster eingeben. 
+Anschließend „zurück“ und „Speichern“. 
+Für die Auswahl eines Piloten im Hauptmenü auf das Feld klicken und 
+es erscheint eine ggf. scrollbare Auswahl der angelegten Piloten: 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 18 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+ 
+ 
+5.4 Anlage des Geländes 
+ 
+Die Geländebezeichnung sollte vom Verein vorgegeben werden, 
+damit die Bezeichnung für alle Einträge der Piloten identisch ist. Dies 
+kann man auch schlank halten. Einfach z.B. „MFG Uetze“ – das reicht 
+meist schon. Die Koordinaten sind optional. 
+  
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 19 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+Die Geländeeingabe kann vereinfacht und vereinheitlicht werden, 
+indem ein QR-Code mit der Geländeangabe gescannt wird: 
+ 
+ 
+QR-Codes via Internet-Tools erstellen 
+Aufbau:  
+Gelaende#Bezeichnung;Strasse;Plz;Ort; 
+Beispiel: 
+Gelaende#Mustergelände;Musterstrasse 18;12345;Musterdorf; 
+ 
+Der Gelände-QR Code kann auch zur Weitergabe an andere 
+Vereinsmitglieder oder Gäste angezeigt und zum Abscannen zur 
+Verfügung gestellt werden und dieser kann auch die Zugangsdaten 
+für den FTP-Server enthalten, wenn diese entsprechend zum Gelände 
+angegeben werden. 
+ 
+Die Auswahl von Geländen erfolgt auf die gleiche Weise wie beim 
+Piloten, wenn man mehrere Gelände angelegt hat. 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 20 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+Tipp: Wenn man wechselweise nach den Verbandsregeln oder der „Open 
+Category“ (OC) fliegen und dies dokumentieren möchte, kann man am 
+gleichen Ort zwei Gelände definieren. 
+ 
+5.5 Anlage eines Modells 
+Bei der Modellauswahl geht man einfach über Checkboxen und Pull-
+Down Menüs durch die Angaben. Eine Mehrfachauswahl ist möglich, 
+ggf. gewünscht. Eine Bezeichnung angeben nicht vergessen. 
+ 
+ 
+Man kann auch mehrere Modelle zu einem Eintrag zusammenfassen, 
+da es möglich ist nur das schwerste Modell des Tages anzugeben ist 
+und die vorhandenen Antriebsarten zusammengefasst werden 
+können. Siehe auch das analoge Flugbuchblatt Muster, dass der 
+MFSD auf seinen Downloadseiten anbietet.  
+Mit „+“ legt man weitere Modelle an (speichern nicht vergessen). Hat 
+man mehrere Modelle angelegt kann man mit „<“ und „>“ zwischen 
+diesen „blättern“ und mit der „Mülltonne“ das ausgewählte Modell 
+löschen. 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 21 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Eine Auswahl bei mehreren Modellen erfolgt analog der Auswahl von 
+Pilot oder Gelände.  
+Tipp: Auch für Modelle können QR-Codes verwendet werden. Siehe 
+Anlage „Flugbuch-QR-Codes.PDF“. 
+ 
+ 
+ 
+6. FTP-Export 
+ 
+Um den FTP-Export zu konfigurieren benötigt man die Zugangsdaten des 
+FTP-Servers. Diese lassen sich bequem von Smartphone zu Smartphone 
+per QR-Code übertragen, indem dieser einfach abgescannt wird (QR-
+Code-Symbol oben rechts zum aktivieren).  
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 22 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+Dabei bleibt das Passwort immer verborgen. Möchte man einem Gast 
+Zugang gewähren hakt man temporär die Checkbox „nur heute gültig“ 
+an, lässt den Gast den QR-Code scannen und nimmt den Haken wieder 
+raus. So ist der weitergegebene QR-Code nur diesen einen Tag gültig. 
+Dieser kann auch ausgedruckt und ausgehängt werden, z.B. bei einer 
+Veranstaltung. 
+ 
+                 
+ 
+        QR-Code für den Gast 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 23 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+Für eine größere Anzeige auf „QR Anzeigen“ klicken. Mit „Speichern“ 
+verlassen.  
+  
+ 
+Mit dem Knopf „Export“ kann man den QR-Code für z.B. einen Ausdruck 
+exportieren. Die QR-Code Datei liegt dann im Verzeichnis 
+Download/Flugbuch/Export des Smartphones. 
+Wer (noch) keinen FTP-Server hat, hat folgende Optionen: 
+• Vorhandenen FTP-Server benutzen  
+Ist bei vorhandenem Web-Space normalerweise vorhanden.  
+• FTP-Account kaufen  
+Gibt es sehr preiswert (ca. 4€/Monat).  
+• Anderen FTP-Server mitbenutzen  
+Viele FTP-Server unterstützen mehrere Nutzer. Dadurch kann ein 
+Server-Account von mehreren Vereinen genutzt werden. Es 
+entstehen keine Mehrkosten. Die Datenbereiche der einzelnen 
+Nutzer sind voneinander isoliert. 
+Für jedes Gelände kann ein separater FTP-Server definiert werden. Die 
+Geländedaten sind im FTP-QR-Code enthalten. Ohne Zuordnung zum 
+Gelände, gilt ein FTP-Server für alle Gelände. 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 24 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+7. Flüge loggen 
+Nachdem alle Eingaben erfolgt sind, kann man sich mit einem Klick auf  
+„Anmelden“ den Flugbetrieb starten und mit Klick auf „Abmelden“ alle 
+Einträge eines Piloten en Block wieder beenden.  
+Einzelne Einträge beenden erfolgt über die Editierfunktion im Menü, 
+dazu gleich mehr. 
+ 
+                       
+ 
+ 
+Ein Export der Einträge kann jederzeit erfolgen, wird aber nur manuell 
+vom Piloten aktiviert. So sind die Daten quasi online auf dem Vereins-
+Server für die Flugleitung – falls dies vom Verein erwünscht / gefordert – 
+allerdings ist dies auch der Sinn der Sache. 
+In den meisten Fällen wird sogar nur ein Eintrag am Tag ausreichen, z.B. 
+wenn man nur Segler (mit / ohne E-Antrieb bis 12 kg fliegt). Es reicht also 
+eine Anmeldung, ein Export via FTP auf den Vereinsserver, eine 
+Abmeldung und der Export dazu. Mit etwas Übung nicht mehr Aufwand 
+als das Papier-Logbuch des Vereins auszufüllen, aber viel weniger 
+Aufwand für den Verein die nun digitalen Daten zu verarbeiten.  
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 25 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+Sobald man einen Flug anmeldet erscheint folgendes Fenster: 
+ 
+ 
+ 
+Die Daten können über „Details >“ ggf. noch einmal korrigiert werden. 
+Ansonsten „Speichern“ und der Eintrag ist erstellt. Die Eingaben zum 
+Modell sind dabei in der Darstellung auf ein Minimum reduziert. 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 26 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+Auf diesem Bild erkennt man die verschiedenen angelegten Einträge als 
+Beispiel. Der Eintrag der Endzeit erfolgt erst mit der Abmeldung des 
+Piloten oder per Edit des Eintrags. 
+Möchte man einen Eintrag einzeln abmelden, wird der Eintrag editiert 
+(long tap) und die Ende-Zeit eingetragen.  
+ 
+                      
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 27 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Vergisst man die Abmeldung, werden mit der Abmeldung am Folgetag 
+oder später die Endzeiten pauschal auf 23:59 Uhr des Flugtages gesetzt. 
+Solange die Endzeit auf 00:00 steht, wurde kein Ende gesetzt. 
+ 
+Im Feld Bemerkungen kann frei geschrieben werden. Für einige Fälle 
+kann über die Textauswahl ein bereits vordefinierter Text eingefügt und 
+auch wieder entfernt werden. 
+  
+ 
+Mit dem Timer kann jede Flugzeit gestoppt und geloggt werden – wenn 
+man möchte (gefordert wird dies nicht). 
+ 
+ 
+ 
+ 
+Tipp: In der Anlage zum Handbuch findet sich ein Dokument zu QR-
+Codes. Mit vorerstellten QR-Codes können Einträge per QR-Code Scan 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 28 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+generiert werden. So ein QR-Code kann z.B. am Modell angebracht 
+werden und enthält alle relevanten Angaben. Dazu dient das QR-Code-
+Symbol oben rechts in der App. 
+ 
+Der QR-Code kann auch Gruppen von Modellen und Antrieben 
+enthalten, so dass vordefinierte QR-Codes für mehrere Modelle die an 
+einem Tag genutzt werden sollen erstellt werden können. Dabei helfen 
+entsprechende Dienste im Internet. 
+Auf diese Weise können Einträge blitzschnell angelegt werden. Und auch 
+ein QR-Code für die Abmeldung zum Tagesende kann erstellt werden. 
+ 
+Mit dem Modell-Code können auch der Name von Pilot und Modell per 
+QR-Code eingetragen werden – unabhängig von den Stammdaten. 
+(Hinweis: Dies ist vor allem für Veranstaltungen / Wettbewerbe gedacht) 
+ 
+Je nach Scan im Pilot/Modell- oder Timer-Reiter, wird ein 
+entsprechender Eintrag erzeugt. Mit dem Timer#-Code kann der 
+Timerbetrieb erzwungen werden. So können einzelne Flüge bequem per 
+QR-Code mit Start und Landung erfasst werden. 
+Näheres in der Anlage. 
+Wenn man an einem Tag mehrere Gelände nutzt oder für mehrere 
+Piloten loggt, wird der Bereich der Einträge schnell zu klein. An dieser 
+Stelle hilft es ein Filter auf das voreingestellte Gelände und / oder den 
+voreingestellten Piloten zu setzen: 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 29 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+Filtern: Über „Auswahl“ kann die Anzeige der Einträge  
+auf Ort, Pilot oder aktive Piloten gefiltert werden 
+Ab Version V 3.0.0.0 kann auch auf aktive Piloten gefiltert werden. Abgemeldete Piloten werden in 
+der Liste der Einträge ausgeblendet. So kann man sich einen Überblick, über die aktuell aktiven 
+Piloten am Platz einen Überblick verschaffen.  
+ 
+ 
+ 
+ 
+ 
+7.1  APP- / Sprach-Einstellungen 
+ 
+ 
+Über den Menüpunkt „APP-Einstellungen“ können folgende Funktion 
+aktiviert werden 
+• Timermodus an/aus – aktiviert den Timer im Hauptscreen 
+• Flugleiter Dialog – aktiviert das Fenster für Eintragsdetails, um z.B. 
+Bemerkungstexte erfassen zu können. 
+ 
+• Export Flugleiter immer oben – sortiert die Flugleiter beim PDF-
+Export über die Einträge eines Tages auf einem Gelände. Sonst 
+werden die Flugleiter chronologisch einsortiert. 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 30 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+• Auto FTP Upload – ACHTUNG: Mit dieser Option wird der 
+automatische Upload aktiviert. Diese Option sollte nur aktiviert 
+werden, wenn der Umgang mit der App Routine geworden ist, da 
+sonst viele fehlerhafte Einträge beim Verein landen und dort viel 
+Korrekturaufwand bedeuten können. Ansonsten erspart es dem 
+Anwender die zwei „Klicks“ für den FTP-Upload. (erweitert ab V 3.0.0.0) 
+ 
+• Texte bearbeiten – ermöglicht die Bemerkungstexte zu editieren. 
+ 
+• Die Sprache der App kann auf andere Sprachen umgestellt 
+werden. Außerdem kann individuell eine beliebige Sprache ergänzt 
+werden „Edit custom language“. Hierzu kann eine Text-Datei recht 
+einfach über z.B. DeepL übersetzt und hochgeladen werden. (erweitert 
+ab V 2.0.0.0) 
+      
+ 
+      Menü: App Einstellungen   
+     Texte hinzufügen oder löschen 
+Das Grundgerüst dieser Textdatei kann mit dem „Export“-Knopf im 
+Edit-Fenster gespeichert und anschließend im Texteditor 
+bearbeitet werden. Die Syntax muss dabei streng erhalten bleiben. 
+Keine Zeilenumbrüche oder Leerzeilen! Beispiel: 
+Pilot/Modell=Pilot/Model 
+Anmelden=Log in 
+Abmelden=Logout 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 31 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+    
+ 
+        Voreingestellte Sprachen wählen               Benutzerdefinierte Sprache editieren 
+Die Textdatei per „Load File“ laden und erst kontrollieren! 
+Anschließend mit „Save“ in App speichern (oder verwerfen).  
+Dieser Schritt ist wichtig, damit durch ein "Load File" nicht die 
+aktuell genutzte Übersetzung überschrieben wird! 
+ 
+7.2  Multi-Modellauswahl 
+ 
+ 
+Mit der Multi-Modellauswahl können per einfacher Auswahl der 
+hinterlegten Modelle die Modelle gewählt werden, die an dem Tag zum 
+Einsatz kommen sollen. Mit einem weiteren Klick sind die Einträge für 
+alle ausgewählten Modelle sofort angelegt. 
+ 
+Für die Multi-Modellauswahl muss die Modellauswahl in den 
+Stammdaten lange gedrückt werden (sog. long tap): 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 32 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+     
+ 
+Per „long tap“ auf die Modellauswahl  
+gelangt man in die Multimodellauswahl 
+Für die Übernahme der gewählten Modelle oben rechts den kleinen Pfeil 
+anwählen. In der Folge bekommt man für die Auswahl entsprechende 
+Einträge. 
+ 
+8. Flüge editieren 
+ 
+Über ein „long tap“ auf einen Eintrag oder über die Auswahl im Menü 
+gelangt man in den Editiermodus. Dies ist der gleiche Bildschirm wie 
+nach der Anmeldung eines Flugs. Über „Details >“ können alle Parameter 
+geändert werden.  
+Für die Selektion über das Menü muss der entsprechende Eintrag grau 
+hinterlegt sein (kurz antippen), damit die Menüfunktion weiß welcher 
+Eintrag gemeint ist. 
+ 
+Auf diese Weise kann auch jeder Flug eine eigene Endzeit bekommen, da 
+über den Abmelde-Button auf dem Hauptschirm alle Flüge des Piloten 
+zusammen beendet würden (was den Anforderungen genügen würde). 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 33 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+Tipp: Wenn man die Liste der Einträge erweitern möchte, kann man die 
+„Auswahl“ oben links mit einem Klick auf das „-„ Symbol einklappen. 
+ 
+9. Flugleiterdienst 
+ 
+Der Flugleiterdienst kann jederzeit aufgenommen werden. Dazu 
+wechselt man den Reiter auf „Flugleiter“ und klickt auf den grünen Pfeil. 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 34 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Der Flugleiterdienst wird ohne Modellangabe entsprechend unter den 
+Einträgen angezeigt. Zum Ende des Einsatzes klickt man auf „Stop“ (das 
+rote Quadrat). So kann jederzeit der Flugleiterdienst zwischen den 
+anwesenden Piloten im fliegenden Wechsel, wie es die VBE des MFSD 
+erlaubt, übergeben und dokumentiert werden. 
+Die anderen Einträge müssen nicht beendet werden, es sollte klar sein, 
+dass während des Flugleiterdienstes der Flugleiter keine eigenen Modelle 
+fliegt. 
+ 
+10. Im- und Export 
+ 
+Ein Export kann jederzeit erfolgen, auch von offenen Einträgen. Es muss 
+minimal am Ende des Tages ein Export erfolgen, damit das Flugbuch dem 
+Verein zur Verfügung steht. Bei entsprechender (FTP-) Datenverbindung 
+sollten die Einträge für den Verein zeitnah exportiert werden. 
+ 
+Der bevorzugte Export-Weg ist dazu der Datentransfer per FTP. Dies ist 
+eine verschlüsselte Verbindung zum Vereinsserver. Bitte vor dem Export 
+sicherstellen, dass alle Daten korrekt sind. Exportierte Datensätze 
+können auf dem Vereinsserver nur durch den Server-Admin gelöscht 
+werden. 
+ 
+          
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 35 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+Die App erlaubt zusätzlich den Export per eMail als PDF, FBD**) oder CSV 
+(blauer Bereich) mit dem „E-Mail-Export“ Button. **) FDB (FlugBuchDateiformat) = XML 
+ 
+Im Normalfall wird dabei der eMail-Client gestartet (ggf. via Auswahl) 
+und die Dateien als Anhang automatisch angefügt. Sollte dies nicht 
+funktionieren die Dateien über „Backup Einträge“ in den Export Ordner 
+speichern, das eMail-Programm starten und die Anhänge von Hand 
+anfügen.  
+ 
+Ein Stammdatenexport erfolgt ausschließlich in den Download Ordner 
+(Download/Flugbuch/Export) des Smartphones (als Backup). Das 
+Zielverzeichnis muss vom User gewählt werden, weil Google für Android 
+13 die Datei-Berechtigungen eingeschränkt hat. Bei Auswahl mehrerer 
+Checkboxen werden die Dateien in einem Zip-Archiv exportiert und 
+müssen vor einem Import extrahiert werden. 
+ 
+ 
+ 
+ 
+Die Stammdaten können so gesichert und per Import wieder eingespielt 
+werden (Backup).  
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 36 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Der FTP-Upload der Flugbucheinträge wird mit dem gelben 
+Computersymbol gestartet. Dieser erfolgt ausschließlich im FBD Format, 
+daher wird keine Checkbox benötigt. 
+Für den Import ist folgende Prozedur wichtig: 
+ 
+Flugbuchdaten werden mit der Dateiendung .FBD gespeichert. 
+Stammdatendateien (eigentlich eine CSV-Datei) mit der Dateiendung 
+.FBS. Importiert wird auf Android (ab V. 11) durch Anklicken der zu 
+importierenden Datei aus einem Dateimanager. Anschließend öffnet sich 
+ein Fenster, mit welcher App die Datei geöffnet werden soll. An dieser 
+Stelle das Flugbuch wählen. 
+ 
+ 
+ 
+Ob man „Nur diesmal“ oder „immer“ anklickt obliegt dem Benutzer. Bei 
+„immer“ wird beim nächsten Import nicht mehr nachgefragt. 
+ 
+Es öffnet sich die Flugbuch-App und ein Dialog fordert dazu auf den 
+Import mit „Ja“ zu bestätigen. Also mit „Ja“ bestätigen.  
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 37 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+                
+ 
+ 
+Beim Import werden die Stammdaten verglichen und ggf. nicht ein 
+weiteres Mal importiert. So sind Doppeleinträge ausgeschlossen. 
+ 
+Die Stammdaten werden im CSV-Format (UTF-8) abgelegt. So kann man 
+sich als Verein aus seiner Vereinsdatenbank, z.B. via Excel, eine 
+Importdatei erstellen und diese einfach importieren, ohne dass alle 
+Vereinsmitglieder in die App getippt werden müssen. Dateiendung auf 
+.FBS ändern! Die Dateinamen dürfen nicht geändert werden! 
+ 
+Die Syntax für die Dateien: 
+ 
+Pilot: „Flugbuch_Piloten.fbs“ 
+Name;VorName;hatSchulungsnachweis; 
+"Doe";"John";False; 
+"Muster";"Max";True; 
+ 
+Modell: „Flugbuch_Modelle.fbs“ 
+Bezeichnung;"ModellTypCodes";"MotorTypCodes";GewichtsKlasse;Frequ
+enz;Kanal;Registriernummer; 
+"F3K";"1";"0";"0";"0";;; 
+"Standard";"0, 1";"0, 1";"2";"0";;; 
+"E-Flugzeug";"0";"1";"2";"0";;; 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 38 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Gelände: „Flugbuch_Orte.fbs“ 
+Bezeichnung;Strasse;Plz;Ort; 
+"Uetze";“Musterstrasse“;“12345“;“Musterhausen“; 
+"FAG";;;; 
+"Hinter dem Haus";;;; 
+"Hang";;;; 
+ 
+Tipp:  
+ 
+Auf diese Weise können die Vereine sämtliche Mitglieder ihres Vereins 
+einmal anlegen und auf alle Mitglieder, die an dem online Flugbuch 
+teilnehmen wollen, verteilen. Die Daten müssen also nicht auf jedem 
+Smartphone eingetippt werden! 
+ 
+Die Unterschrift eines Piloten kann jedoch nicht importiert werden, und 
+kann bei Nutzung vorher vom Piloten einmal über die Editierfunktion 
+eingegeben werden! Die Unterschrift ist optional! 
+Exportierte PDF Dateien liegen entsprechend im Ordner PDF. Anhand des 
+Dateinamens lässt sich das Datum zuordnen. 
+ 
+Import (Austausch) der Flugbuchdaten vom FTP-Server: 
+Unter Android / iOS reicht ein „Wisch“ nach unten im Bereich der 
+Einträge, dann aktualisiert sich das Flugbuch vom FTP-Server automatisch 
+(nur tagesaktuell!). Wird bei den Einträgen ein Datumsbereich 
+eingegeben und der Import über das Menü gestartet, wird der Import 
+dieses Zeitraumes vom FTP-Server vorangestellt. So kann der Verein 
+seine Datenbank auch nachträglich aktualisieren.  
+Unter Windows hilft die rechte Maustaste: 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 39 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+ 
+Hinweis:  
+Unter Windows kann der Import aus der App via Menü gestartet werden. 
+Hierzu müssen die zu importierenden Dateien im Ordner 
+…/Flugbuch/Import liegen. Nach dem Import werden sie nach 
+…/Flugbuch/Import/Backup verschoben. 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 40 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Für ältere Android-Versionen kleiner Android V.11 funktioniert dieser 
+Weg ebenfalls. 
+Ab Version V 3.0.0.0 erfolgt der Im-/Export jeweils über den zum Gelände 
+hinterlegten FTP-Server. Wird für ein oder mehrere Gelände kein Server 
+hinterlegt, gelten die Angaben unter „Standard“. Sind mehrere Server 
+definiert, wird immer auf alle Server exportiert – in der entsprechenden 
+Geländezuordnung. Der Import erfolgt aber immer nur von dem gerade 
+ausgewählten Gelände. Vorher importierte Einträge werden nicht wieder 
+exportiert! Es werden also nur die eigenen Einträge exportiert. 
+ 
+10.1  Besonderheiten unter Windows – Startparameter (ab V 1.2.4.0) 
+Mit den Startparametern für die Windowsversion können mit dem 
+Programmstart automatisch Aktionen ausgeführt werden (z.b. über 
+automatische Aktionen über die Windowsausgabenplanung oder einfach 
+als Verknüpfung oder Batch-Datei) 
+ 
+Hinweis: Wenn Startparameter angewendet werden beendet sich die 
+App nach der Ausführung wieder automatisch! 
+ 
+ 
+1) Startparameter "-pdf"  
+-> erzeugt aus den in der App befindlichen Daten ein PDF, dieses liegt      
+im PDF Ordner der App. 
+ 
+2) Startparameter "-ftpimport"  
+-> holt Daten vom FTP Server und importiert die FBD Dateien in die 
+Datenbank (dazu müssen natürlich in der App die gültigen FTP-
+Zugangsdaten hinterlegt sein) 
+ 
+Optional kann man hinter den Startparameter maximal 2 ergänzende 
+Steuerungsparameter mitgeben: 
+ 
+a) kein Optionaler Parameter 
+-> FTP-Import sowie PDF-Generierung läuft zum aktuellem
+ 
+Systemdatum des PC's 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 41 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+b) 1. Optionaler Parameter „Datumsangabe“  
+in Form tt.mm.jj -> 01.03.23 
+     -> verhält sich wie a) nur zum angegeben Datum 
+ 
+c) 2. Optionaler Parameter „Datumsangabe“  
+ 
+in Form tt.mm.jj -> 15.03.23 
+     -> das „bis Datum“ dient im Zusammenhang mit b) um einen  
+         Zeitraum festzulegen 
+ 
+     -> es wird also ein PDF erzeugt für den Zeitraum vom 01.03. bis  
+         15.03.2023 
+-> es werden Daten vom gewähltem Zeitraum vom FTP Server    
+    geholt und importiert. 
+ 
+d) Alternative 1. optionaler Parameter angeben mit "-monat" 
+    -> die App ermittelt den aktuellen Monat aus dem aktuellem  
+        Tagesdatum und setzt damit den gesamten Monat als Zeitraum fest  
+        und die ausgeführte Aktion verhält sich analog zu c). 
+ 
+Beispiele: 
+ 
+Flugbuch.exe -pdf 
+Flugbuch.exe -pdf 01.03.23 
+Flugbuch.exe -pdf 01.03.23  15.03.23 
+Flugbuch.exe -pdf -monat 
+Flugbuch.exe -ftpimport 
+Flugbuch.exe -ftpimport 01.03.23 
+Flugbuch.exe -ftpimport 01.03.23  15.03.23 
+Flugbuch.exe -ftpimport -monat 
+ 
+Will man beides kombinieren, kann man das in einer Batchdatei 
+zusammenführen, z.b. als Datei „FlugbuchAktualisierung.bat“ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 42 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+In die Datei fügt man folgende 2 Zeilen ein (den FTP Import natürlich 
+zuerst sonst fehlen die Daten in der folgenden PDF): 
+ 
+Flugbuch.exe -ftpimport -monat 
+Flugbuch.exe -pdf -monat 
+ 
+Macht man dies am Abend des Monatsletzten, kann am Vereins-PC der 
+gesamte Monat mit einer verknüpften Batchdatei vom FTP-Server 
+importiert und als PDF Datei ausgegeben werden. 
+ 
+3) Startparameter "-csv"  
+-> exportiert die Einträge im CSV Format 
+ 
+4) Startparameter "-fbd"  
+-> exportiert die Einträge im FBD Format 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 43 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+11. Stammdaten Import unter iOS 
+ 
+Unter iOS wählt man für die zu importierende Datei, die man z.B. per E-
+Mail zugesendet bekommen hat, das Verzeichnis „Import“ und speichert 
+sie dort ab (auf „Sichern“ klicken): 
+ 
+        
+ 
+ 
+        
+ 
+Sofern zu importierende Dateien hier abgelegt wurden, kann der Import 
+über die App via Menü  gestartet werden: 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 44 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+        
+ 
+ 
+Nach dem Import wird die Datei in den Ordner „Backup“ verschoben. Bei 
+einem Import werden ggf. auch die Daten vom FTP Server geladen. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 45 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+12. Hinweise 
+ 
+a. Plattformen 
+• Ab Win 7:  
+Keine Installation, so z.B. portabel vom USB-Stick 
+verwendbar 
+• Android ab V.6 (NEON Tech) 
+• iOS 16 
+ 
+b. Wer hat Datenzugriff? 
+• Der User selbst. Alles ist unter seiner Kontrolle 
+• Der Verein, wenn dieser die Exporte per manuellem Anstoß 
+des Users erhält 
+• Die eMail Empfänger denen der User die Exporte sendet 
+• Innerhalb des Vereins alle die, die das Flugbuch – also die 
+Summe der Exporte – einsehen sollen (Sinn der Sache). 
+• Ggf. Gastflieger – aber nur zum gleichen Tagesdatum 
+• Der Verband MFSD e.V. oder Behördenvertreter auf 
+Verlangen 
+ 
+c. Betriebsmöglichkeiten 
+• Single Point of use: Zum Beispiel zentrales Tablet (oder PC) – 
+auch offline 
+• Single-User (jeder Pilot für sich) 
+• Multi-User (Mischbetrieb, ein User loggt Kollegen ohne 
+Smartphone oder Gäste) 
+• Gäste haben einen Tageszugang (im QR-Code verschlüsselt) 
+• Private Nutzung ausdrücklich erlaubt / erwünscht. 
+ 
+d. Datenschutz (Details siehe Datenschutzerklärung!) 
+• Die Daten sind unter voller Kontrolle des Users / des Vereins 
+• Ablage der Daten in Passwort geschützten Bereichen (FTP-/ 
+eMail Server) 
+• Keine Weitergabe an Dritte 
+• Das Passwort des FTP-Servers ist im QR-Code verschlüsselt 
+• Für Gäste ist zusätzlich das Tagesdatum im QR-Code 
+verschlüsselt. 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 46 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+e. Copyright 
+• Die Software ist frei via MFSD Web-Site (Downloadbereich) 
+verfügbar *) Der Installation aus unbekannten Quellen muss zugestimmt werden 
+• Eine kommerzielle Verwendung ist ausgeschlossen 
+• Sie ist verbandsunabhängig nutzbar 
+• Sie ist kostenlos 
+• Sie ist von Modellfliegern für Modellflieger 
+• Sie ist ein 100% ehrenamtliches Freizeitprojekt des MFSD 
+• Google PlayStore ist in Vorbereitung 
+ 
+©️ 2023 Manfred Stratmann - Freeware Lizenz 
+  - die App wird kostenlos zur Verfügung gestellt 
+  - darf nur kostenlos weitergegeben werden (non-commercial) 
+  - jede Nutzung geschieht auf eigene Gefahr, Haftung  
+    ausgeschlossen 
+  - Anspruch auf Fehlerfreiheit und richtiger Funktion besteht 
+     nicht! 
+ 
+This software uses some third-party code (C) 2012 Arnaud 
+Bouchez provided by Synopse - 
+http://synopse.info - under Mozilla Public License 1.1; 
+modified source code is available at 
+http://SoftwareCompany.com/MPL. 
+ 
+f. Support 
+ 
+Fragen zur App werden über die eMail-Adresse Flugbuch@mfsd.de 
+beantwortet. 
+ 
+g. Danksagung 
+Das Konzept bei Erstellung der Software war, ein universelles und 
+einfach zu bedienendes Tool zu schaffen. Besonderes Augenmerk 
+wurde darauf gelegt, dass der Pilot die volle Kontrolle über die 
+eingegebenen Daten hat, die App nicht unaufgefordert Daten 
+versendet und keine Daten an Dritte weitergegeben werden. Die 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 47 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+App ist als Freizeitprojekt ohne kommerziellen Hintergrund 
+entstanden.  
+Besonderer Dank gebührt dem Autor der Software Manfred 
+Stratmann, der diese Software in seiner Freizeit erstellt hat. 
+Manfred wurde dabei von ehrenamtlichen Helfern des MFSD 
+unterstützt.. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 48 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Anhang 
+ 
+1) PDF-Export des Flugbuchs: 
+ 
+2) Beispiel aus der Liste der QR-Codes (vordefinierte Modelle): 
+ 
+3) Abmeldung des Piloten per QR-Code: 
+4) Datenschutzerklärung (folgende Seiten) 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 49 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+ 
+MFSD-Flugbuch-App  
+ 
+Datenschutzerklärung 
+(gültig ist nur die online Version unter: https://www.mfsd.de/datenschutz-flugbuch-app/) 
+ 
+1) Herausgeber der „MFSD-Flugbuch-App“ 
+Die „MFSD-Flugbuch-App“ (im Folgenden nur „App“) wird vom 
+Modellflugsportverband Deutschland e.V. (im Folgenden „MFSD“) 
+herausgegeben. 
+2) Freiwillige Nutzung 
+Die Nutzung der App ist freiwillig. 
+3) Rechtsgrundlage / Zweck der Datenverarbeitung 
+Der MFSD hat auf Grundlage insbesondere von Art. 16 DVO (EU) 
+2019/947 und § 21 g LuftVO vom Luftfahrtbundesamt (LBA) eine sog. 
+„Verbandsbetriebserlaubnis“ (im Folgenden „MFSD-VBE“) erteilt 
+erhalten. Diese MFSD-VBE enthält die „Standardisierte Regeln für 
+Flugmodelle“ (im Folgenden „StRfF“), die für Modellflug im Rahmen der 
+MFSD-VBE gem. § 21f LuftVO einzuhalten sind (Modellflugbetrieb). 
+Nach Ziff. 8.1.7 StRfF ist auf angezeigten und/oder ausgewiesenen 
+Modellfluggeländen ein Flugbuch zu führen (Dokumentationspflicht). 
+Die von den Modellflug-Piloten erfassten Daten werden zu diesem Zweck 
+vom Geländehalter zu einem Flugbuch zusammengeführt (Zweck der 
+Erfassung). 
+Dieses Flugbuch kann gem. Abschnitt 8.1.7 StRfF in elektronischer Form 
+geführt werden. Dies zu tun ist Aufgabe der Flugbuch-App. 
+4) Nutzer der App 
+Diese App kann von verbandszugehörigen Modellflug-Piloten und  
+-Vereinen im Zusammenhang mit dem o.g. Modellflugbetrieb genutzt 
+werden, ebenso von nicht-verbandszugehörigen Modellflug-Piloten und 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 50 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Gastpiloten, sofern diese Piloten an Modellflugbetrieb auf 
+Modellfluggeländen teilnehmen wollen, auf welchen die StRfF gelten. 
+ 
+5) Verarbeitete Daten 
+Name, Vorname, Unterschrift, Nachweis der Schulungs, Name und/oder 
+evtl. Ortsangaben des Vereinsgeländes oder Betriebsorts, 
+Frequenz/Kanal der Fernsteuerung oder Angabe, dass der Sender und 
+Empfänger der eingesetzten Fernsteuerung (z.B. Frequency Hopping) 
+operiert, Gewichtsklasse und ggf. Antriebsart der Flugmodelle sowie 
+Datum, Start und Ende des Flugbetriebs, ggf. die Eigenschaft als 
+Modellflugleiter und die Dauer dieser Tätigkeit, optional die Start- und 
+Landezeiten der Modelle. 
+Diese Daten werden ausschließlich von Nutzern erfasst. Es werden keine 
+Daten von Sensoren (z.B. Standortdaten) des Endgerätes verarbeitet 
+oder übernommen. 
+Es gibt keine Verknüpfungen zu anderen Apps auf dem Endgerät. 
+6) Zugang zu den erfassten Daten 
+Zugang zu den Daten, die mit der MFSD-Flugbuch-App erfasst werden, 
+haben alle Modellflug-Piloten, die sich einen FTP-Server-Zugang teilen. 
+Für Gäste der Modellflugvereine ist dieser Zugang in der Regel auf den 
+aktuellen Tag begrenzt (Gastzugang).   
+Eine Verarbeitung der Daten findet in der Regel nur durch die Personen 
+statt, die vom Modellflugverein dazu beauftragt worden sind, z.B. im 
+Rahmen der Modellflugleitertätigkeit, insbesondere zur Erfüllung der 
+Dokumentationspflichten in Ziff. 8.1.7 StRfF. 
+7) Weitergabe von Daten  
+Daten werden ausschließlich durch Benutzeraktionen initiiert und in 
+verschlüsselter Form an den vom Modellflugverein bereitgestellten FTP-
+Server übertragen oder per eMail an vom Nutzer designierte Empfänger 
+versendet. Es gibt keinen Automatismus zum Datenversand aus der App. 
+Eine Weitergabe der Daten an Dritte erfolgt grundsätzlich nicht. 
+Ausnahmen sind: 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 51 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+- auf Verlangen die Weitergabe an den MFSD, damit der MFSD seine 
+Monitoring- und Prüfungspflichten gem. StRfF einhalten kann, 
+insb. gemäß dem 2. Abschnitt und 14. Abschnitt der StRfF;  
+- auf Verlangen die Weitergabe an das LBA und/oder an eine 
+Landesluftverkehrsbehörde, sofern ein berechtigtes Interesse 
+vorliegt. 
+ 
+8) Zugriffsdaten 
+Die App benötig Zugriff auf einen FTP-Server und speichert die 
+Zugangsdaten in verschlüsselter Form. Der Zugriff kann verschlüsselt per 
+QR-Code weitergegeben werden. 
+9) App-Berechtigungen 
+Kamera: QR-Code Erkennung 
+Speicher: Ablage der eingegebenen Daten 
+10) Löschung von Daten 
+Daten der App auf dem Smartphone: 
+Durch die App gespeicherte Daten auf dem Smartphone werden 
+ausschließlich durch nutzerseitige Betätigung von Lösch-Funktionen 
+gelöscht. 
+Daten auf Serversystemen: 
+Auf dem FTP-Server und Mailserver werden von der App keine Daten 
+gelöscht. 
+Für die im Rahmen der Dokumentationspflichten des 
+Modellflugvereins, zur Erfüllung der Monitoring- und Prüfungspflichten 
+des MFSD erfassten Daten kann eine Löschung erst nach Ablauf von 3 
+vollen Kalenderjahren nach der Datenerfassung verlangt werden (vgl. 
+Art. 17 Abs. 1 a) DSGVO) . 
+11) Widerrufsrecht 
+Der Nutzer kann die App-Berechtigungen jederzeit widerrufen, die 
+Funktion der App ist dadurch eingeschränkt oder nicht mehr gegeben. 
+ 
+12) Externe Links 
+ 
+MFSD-Flugbuch-App, V.4.0.0.0 
+ 
+Seite 52 von 52 
+ 
+Stand: 05.02.2025 
+ 
+© MFSD e.V. 
+Die Flugbuch-App beinhaltet zwei weiterführende Links zur „Digitale 
+Plattform Unbemannte Luftfahrt“ vom BMDV (www.dipul.de) und zu 
+dieser Datenschutzerklärung auf die Web-Seite des MFSD e.V. 
+13) Datenschutzrechte/Datenschutzbeauftragter 
+Soweit – ggf. auch durch den MFSD - personenbezogene Daten von Ihnen 
+verarbeitet werden, stehen Ihnen insbesondere folgende Rechte zu: 
+- die Rechte aus den Artikeln 15, 16, 17, 18, 20 und 21 DSGVO zu 
+- das Recht den Datenschutzbeauftragten zu kontaktieren (Art. 38 
+Abs. 4 DSGVO) 
+- das Recht sich bei der Aufsichtsbehörde für den Datenschutz zu 
+beschweren. 
+Der Datenschutzbeauftragte des MFSD ist erreichbar: 
+Modellflugsportverband Deutschland e.V. 
+- Datenschutzbeauftragter - 
+Hermann-Blenk-Straße 28 
+38108 Braunschweig 
+E-Mail: info@mfsd.de 
+Telefon: 05132 – 5988-115, Telefax: 0531 – 23540 – 11 
+ 
+ 
+ 
