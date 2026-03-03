@@ -14,14 +14,19 @@ class ModellTyp(str, enum.Enum):
     segelflugzeug = "segelflugzeug"
     hubschrauber = "hubschrauber"
     multikopter = "multikopter"
+    luftschiff = "luftschiff"
+    ballon = "ballon"
+    gleitschirm = "gleitschirm"
+    rakete = "rakete"
     sonstige = "sonstige"
 
 class Antriebsart(str, enum.Enum):
     elektro = "elektro"
-    verbrennung = "verbrennung"
+    verbrenner = "verbrenner"
     turbine = "turbine"
-    anderer = "anderer"
-    kein_antrieb = "kein_antrieb"
+    raketenantrieb = "raketenantrieb"
+    ohne = "ohne"
+    sonstige = "sonstige"
 
 class Gewichtsklasse(str, enum.Enum):
     bis_250g = "bis_250g"
@@ -29,7 +34,7 @@ class Gewichtsklasse(str, enum.Enum):
     bis_4kg = "bis_4kg"
     bis_12kg = "bis_12kg"
     bis_25kg = "bis_25kg"
-    bis_150kg = "bis_150kg"
+    ueber_25kg = "ueber_25kg"
 
 class User(Base):
     __tablename__ = "users"

@@ -47,6 +47,16 @@ class FlugbuchApp {
         this.modelsListEl = document.getElementById('models-list');
         this.modelsCountEl = document.getElementById('models-count');
 
+        // User Admin UI
+        this.usersView = document.getElementById('view-users');
+        this.btnAdminUsers = document.getElementById('btn-admin-users');
+        this.btnBackUsers = document.getElementById('btn-back-dashboard-from-users');
+        this.usersListEl = document.getElementById('users-list');
+        this.usersCountEl = document.getElementById('users-count');
+        this.btnExportCsv = document.getElementById('btn-export-csv');
+        this.btnExportPdf = document.getElementById('btn-export-pdf');
+        this.newUserForm = document.getElementById('new-user-form');
+
         this.setupEventListeners();
 
         // Initialize Date
@@ -101,13 +111,44 @@ class FlugbuchApp {
             });
         }
 
+        if (this.btnAdminUsers) {
+            this.btnAdminUsers.addEventListener('click', () => {
+                this.dashboardView.classList.replace('active-view', 'hidden');
+                this.usersView.classList.replace('hidden', 'active-view');
+                this.renderUsersView();
+            });
+        }
+
+        if (this.btnBackUsers) {
+            this.btnBackUsers.addEventListener('click', () => {
+                this.usersView.classList.replace('active-view', 'hidden');
+                this.dashboardView.classList.replace('hidden', 'active-view');
+            });
+        }
+
+        if (this.btnExportCsv) {
+            this.btnExportCsv.addEventListener('click', () => this.handleExportCsv());
+        }
+
+        if (this.btnExportPdf) {
+            this.btnExportPdf.addEventListener('click', () => this.handleExportPdf());
+        }
+
         if (this.newModelForm) {
             this.newModelForm.addEventListener('submit', (e) => this.handleNewModel(e));
+        }
+
+        if (this.newUserForm) {
+            this.newUserForm.addEventListener('submit', (e) => this.handleCreateUser(e));
         }
     }
 
     async initDashboard(user) {
         this.currentUser = user;
+
+        if (this.btnAdminUsers && user.rolle === 'admin') {
+            this.btnAdminUsers.classList.remove('hidden');
+        }
 
         try {
             // Load Dropdowns
@@ -253,7 +294,7 @@ class FlugbuchApp {
 
             // Reset form
             this.flightModellSelect.selectedIndex = 0;
-            this.legalConfirm.checked = false;
+            this.legalConfirm.checked = true; // Keep it checked by default
 
             // Reload list
             this.loadFlugbuch();
@@ -359,6 +400,152 @@ class FlugbuchApp {
             this.renderModelsView();
         } catch (error) {
             window.AppUtils.showToast('Fehler: ' + error.message, 'error');
+        }
+    }
+
+    // --- Export Logic ---
+    async handleExportCsv() {
+        const gelaendeId = this.currentGelaende.value;
+        const datum = this.currentDate.value;
+        if (!gelaendeId) return;
+
+        try {
+            await api.exportFlugbuchCsv(gelaendeId, datum);
+            window.AppUtils.showToast('CSV Export gestartet', 'success');
+        } catch (error) {
+            window.AppUtils.showToast('CSV Export fehlgeschlagen: ' + error.message, 'error');
+        }
+    }
+
+    async handleExportPdf() {
+        const gelaendeId = this.currentGelaende.value;
+        const datum = this.currentDate.value;
+        if (!gelaendeId) return;
+
+        try {
+            await api.exportFlugbuchPdf(gelaendeId, datum);
+            window.AppUtils.showToast('PDF Export gestartet', 'success');
+        } catch (error) {
+            window.AppUtils.showToast('PDF Export fehlgeschlagen: ' + error.message, 'error');
+        }
+    }
+
+    // --- User Management Logic ---
+    async handleCreateUser(e) {
+        e.preventDefault();
+        const payload = {
+            vorname: document.getElementById('new-user-vorname').value,
+            nachname: document.getElementById('new-user-nachname').value,
+            email: document.getElementById('new-user-email').value,
+            passwort: document.getElementById('new-user-password').value,
+            rolle: document.getElementById('new-user-role').value,
+            hat_schulungsnachweis: document.getElementById('new-user-schulung').checked
+        };
+
+        const btn = this.newUserForm.querySelector('button[type="submit"]');
+        btn.disabled = true;
+
+        try {
+            await api.createUser(payload);
+            window.AppUtils.showToast('Benutzer angelegt', 'success');
+            this.newUserForm.reset();
+            this.renderUsersView();
+        } catch (error) {
+            window.AppUtils.showToast('Fehler: ' + error.message, 'error');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async renderUsersView() {
+        this.usersListEl.innerHTML = '<div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Lade...</div>';
+        try {
+            const users = await api.getUsers();
+            this.usersCountEl.textContent = users.length;
+            this.usersListEl.innerHTML = '';
+
+            users.forEach(u => {
+                const isAdmin = u.rolle === 'admin';
+                const isMe = u.id === this.currentUser.id;
+
+                const item = document.createElement('div');
+                item.className = 'flight-item glass-panel';
+                item.innerHTML = `
+                    <div class="flight-info">
+                        <div class="flight-pilot" style="color:var(--text-primary);">
+                            <i class="fa-solid ${isAdmin ? 'fa-user-shield' : 'fa-user'}"></i> 
+                            ${u.vorname} ${u.nachname} ${isMe ? '(Ich)' : ''}
+                        </div>
+                        <div class="flight-model">
+                            <span class="badge" style="background:rgba(255, 255, 255, 0.1); color:var(--text-secondary);">${u.email || 'Keine E-Mail'}</span>
+                            <span class="badge ${isAdmin ? 'status-active' : ''}">${u.rolle}</span>
+                        </div>
+                    </div>
+                    ${!isMe ? `
+                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                        <select class="select-input role-select" data-id="${u.id}" style="padding:0.4rem; background:rgba(0,0,0,0.3); border-radius:4px; border:none; color:white;">
+                            <option value="pilot" ${u.rolle === 'pilot' ? 'selected' : ''}>Pilot</option>
+                            <option value="flugleiter" ${u.rolle === 'flugleiter' ? 'selected' : ''}>Flugleiter</option>
+                            <option value="admin" ${u.rolle === 'admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                        <button class="btn-icon btn-password-change" data-id="${u.id}" title="Passwort ändern" style="color:var(--warning)">
+                            <i class="fa-solid fa-key"></i>
+                        </button>
+                        <button class="btn-icon btn-delete-user" data-id="${u.id}" title="Benutzer löschen" style="color:var(--danger)">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>` : '<span style="color:var(--text-secondary); font-size:0.8rem">Keine Aktion</span>'}
+                `;
+                this.usersListEl.appendChild(item);
+            });
+
+            // Bind role change
+            this.usersListEl.querySelectorAll('.role-select').forEach(sel => {
+                sel.addEventListener('change', async (e) => {
+                    const newRole = e.target.value;
+                    const id = e.target.dataset.id;
+                    try {
+                        await api.updateUserRole(id, newRole);
+                        window.AppUtils.showToast("Rolle aktualisiert", "success");
+                    } catch (err) {
+                        window.AppUtils.showToast(err.message, "error");
+                        this.renderUsersView(); // revert select
+                    }
+                });
+            });
+
+            // Bind password change
+            this.usersListEl.querySelectorAll('.btn-password-change').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.currentTarget.dataset.id;
+                    const newPass = prompt("Neues Passwort eingeben:");
+                    if (!newPass) return;
+                    try {
+                        await api.updateUserPassword(id, newPass);
+                        window.AppUtils.showToast("Passwort erfolgreich geändert", "success");
+                    } catch (err) {
+                        window.AppUtils.showToast(err.message, "error");
+                    }
+                });
+            });
+
+            // Bind delete
+            this.usersListEl.querySelectorAll('.btn-delete-user').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.currentTarget.dataset.id;
+                    if (!confirm("Benutzer wirklich löschen?")) return;
+                    try {
+                        await api.deleteUser(id);
+                        window.AppUtils.showToast("Benutzer gelöscht", "success");
+                        this.renderUsersView();
+                    } catch (err) {
+                        window.AppUtils.showToast(err.message, "error");
+                    }
+                });
+            });
+
+        } catch (error) {
+            this.usersListEl.innerHTML = `<div class="empty-state" style="color:var(--danger)">Fehler beim Laden der Benutzer: ${error.message}</div>`;
         }
     }
 }

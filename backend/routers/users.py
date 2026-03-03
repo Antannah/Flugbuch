@@ -33,3 +33,43 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), current
     db.commit()
     db.refresh(new_user)
     return new_user
+
+@router.put("/{id}/rolle", response_model=schemas.UserOut)
+def update_user_role(id: str, update_data: schemas.UserRoleUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    if current_user.rolle != models.UserRole.admin:
+        raise HTTPException(status_code=403, detail="Nur Admins können Berechtigungen ändern")
+        
+    db_user = db.query(models.User).filter(models.User.id == id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
+        
+    db_user.rolle = update_data.rolle
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+@router.put("/{id}/passwort", status_code=status.HTTP_200_OK)
+def update_user_password(id: str, update_data: schemas.UserPasswordUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    if current_user.rolle != models.UserRole.admin:
+        raise HTTPException(status_code=403, detail="Nur Admins können Passwörter zurücksetzen")
+        
+    db_user = db.query(models.User).filter(models.User.id == id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
+        
+    db_user.passwort_hash = auth.get_password_hash(update_data.passwort)
+    db.commit()
+    return {"message": "Passwort erfolgreich geändert"}
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(id: str, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
+    if current_user.rolle != models.UserRole.admin:
+        raise HTTPException(status_code=403, detail="Nur Admins können Benutzer löschen")
+        
+    db_user = db.query(models.User).filter(models.User.id == id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Benutzer nicht gefunden")
+        
+    db.delete(db_user)
+    db.commit()
+    return None

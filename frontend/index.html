@@ -52,7 +52,9 @@
                     <span>Flugbuch</span>
                 </div>
                 <div class="nav-user">
-                    <span id="nav-user-name">Pilot</span>
+                    <button id="btn-admin-users" class="btn-icon hidden" title="Benutzerverwaltung (Admin)"><i
+                            class="fa-solid fa-users"></i></button>
+                    <span id="nav-user-name" style="margin-left: 0.5rem; margin-right: 0.5rem;">Pilot</span>
                     <button id="btn-logout" class="btn-icon" title="Abmelden"><i
                             class="fa-solid fa-right-from-bracket"></i></button>
                 </div>
@@ -64,7 +66,7 @@
                         <i class="fa-regular fa-calendar-days"></i>
                         <input type="date" id="current-date" class="date-input">
                     </div>
-                    <div class="location-selector glass-panel">
+                    <div class="location-selector glass-panel" style="display: none;">
                         <i class="fa-solid fa-location-dot"></i>
                         <select id="current-gelaende" class="select-input">
                             <!-- Populated by JS -->
@@ -110,7 +112,7 @@
 
                             <div class="legal-checkbox">
                                 <label>
-                                    <input type="checkbox" id="legal-confirm" required>
+                                    <input type="checkbox" id="legal-confirm" required checked>
                                     <span class="custom-checkbox"></span>
                                     <span>Ich bestätige die Geltung der StRfF und der Flugordnung der MFG Kitzingen
                                         e.V.</span>
@@ -132,6 +134,18 @@
                     <div id="flight-list" class="flight-list">
                         <!-- Populated by JS -->
                         <div class="empty-state">Lade Flugbuch...</div>
+                    </div>
+
+                    <div
+                        style="margin-top: 1rem; text-align: right; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                        <button id="btn-export-csv" class="btn btn-secondary tooltip"
+                            title="Das Flugbuch für diesen Tag als CSV exportieren">
+                            <i class="fa-solid fa-file-csv"></i> CSV Export
+                        </button>
+                        <button id="btn-export-pdf" class="btn btn-secondary tooltip"
+                            title="Das Flugbuch für diesen Tag als PDF exportieren">
+                            <i class="fa-solid fa-file-pdf"></i> PDF Export
+                        </button>
                     </div>
                 </section>
             </main>
@@ -162,6 +176,10 @@
                             <option value="segelflugzeug">Segelflugzeug</option>
                             <option value="hubschrauber">Hubschrauber</option>
                             <option value="multikopter">Multikopter</option>
+                            <option value="luftschiff">Luftschiff</option>
+                            <option value="ballon">Ballon</option>
+                            <option value="gleitschirm">Gleitschirm</option>
+                            <option value="rakete">Rakete</option>
                             <option value="sonstige">Sonstige</option>
                         </select>
                     </div>
@@ -169,10 +187,11 @@
                         <select id="model-antrieb" required>
                             <option value="" disabled selected>Antriebsart...</option>
                             <option value="elektro">Elektro</option>
-                            <option value="verbrennung">Verbrennung</option>
+                            <option value="verbrenner">Verbrenner</option>
                             <option value="turbine">Turbine</option>
-                            <option value="kein_antrieb">Segler (ohne Antrieb)</option>
-                            <option value="anderer">Anderer</option>
+                            <option value="raketenantrieb">Raketenantrieb</option>
+                            <option value="ohne">Ohne Antrieb</option>
+                            <option value="sonstige">Sonstige</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -183,7 +202,7 @@
                             <option value="bis_4kg">bis 4kg</option>
                             <option value="bis_12kg">bis 12kg</option>
                             <option value="bis_25kg">bis 25kg</option>
-                            <option value="bis_150kg">über 25kg / bis 150kg</option>
+                            <option value="ueber_25kg">über 25kg</option>
                         </select>
                     </div>
                     <div class="input-group">
@@ -207,6 +226,64 @@
                 <div id="models-list" class="flight-list">
                     <!-- Populated by JS -->
                     <div class="empty-state">Keine Modelle gefunden.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- User Management View -->
+    <div id="view-users" class="view hidden">
+        <nav class="glass-nav">
+            <div class="nav-brand">
+                <button id="btn-back-dashboard-from-users" class="btn-icon" title="Zurück"><i
+                        class="fa-solid fa-arrow-left"></i></button>
+                <span>Benutzerverwaltung</span>
+            </div>
+        </nav>
+
+        <main class="dashboard-content">
+            <section class="add-user-section glass-panel" style="margin-bottom: 2rem;">
+                <h2>Neuen Benutzer anlegen</h2>
+                <form id="new-user-form" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="text" id="new-user-vorname" placeholder="Vorname" required style="flex: 1;"
+                            class="input-group input">
+                        <input type="text" id="new-user-nachname" placeholder="Nachname" required style="flex: 1;"
+                            class="input-group input">
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="new-user-email" placeholder="E-Mail Adresse" required class="input">
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <input type="password" id="new-user-password" placeholder="Passwort (Initial)" required
+                            style="flex: 1;" class="input-group input">
+                        <select id="new-user-role" required style="flex: 1;" class="input-group input select-input">
+                            <option value="pilot" selected>Pilot</option>
+                            <option value="flugleiter">Flugleiter</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group"
+                        style="flex-direction: row; align-items: start; gap: 0.5rem; margin-top: 0.5rem;">
+                        <input type="checkbox" id="new-user-schulung" style="margin-top:0.3rem;">
+                        <label for="new-user-schulung" style="font-weight:normal; font-size:0.9rem;">
+                            Schulungsnachweis vorhanden
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">
+                        <i class="fa-solid fa-user-plus"></i> Benutzer anlegen
+                    </button>
+                </form>
+            </section>
+
+            <section class="log-section">
+                <div class="section-title">
+                    <h2>Alle registrierten Benutzer</h2>
+                    <span id="users-count" class="badge">0</span>
+                </div>
+                <div id="users-list" class="flight-list" style="max-height: 70vh;">
+                    <!-- Populated by JS -->
+                    <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Lade...</div>
                 </div>
             </section>
         </main>

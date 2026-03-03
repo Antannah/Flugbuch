@@ -8,7 +8,11 @@ class AuthManager {
         this.userNameEl = document.getElementById('nav-user-name');
 
         this.setupEventListeners();
-        this.checkAuthStatus();
+
+        // Delay checking auth status so app.js listener is ready
+        setTimeout(() => {
+            this.checkAuthStatus();
+        }, 50);
 
         window.addEventListener('auth-expired', () => this.handleLogout());
     }

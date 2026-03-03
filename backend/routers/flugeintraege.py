@@ -59,3 +59,114 @@ def update_flugeintrag(id: str, update_data: schemas.FlugeintragUpdate, db: Sess
     db.commit()
     db.refresh(db_eintrag)
     return db_eintrag
+
+import csv
+from io import StringIO
+from fastapi.responses import Response
+
+@router.get("/export/csv")
+def export_flugbuch_csv(
+    gelaende_id: str, 
+    datum: date_type = None, 
+    db: Session = Depends(get_db), 
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    if current_user.rolle != models.UserRole.admin:
+        raise HTTPException(status_code=403, detail="Nur Admins dürfen exportieren")
+
+    query = db.query(models.Flugeintrag).filter(models.Flugeintrag.gelaende_id == gelaende_id)
+    if datum:
+        query = query.filter(models.Flugeintrag.datum == datum)
+        
+    eintraege = query.order_by(models.Flugeintrag.startzeit).all()
+    
+    f = StringIO()
+    writer = csv.writer(f, delimiter=";")
+    writer.writerow(["Datum", "Start", "Ende", "Pilot", "Flugleiter", "Modell", "Antrieb", "Gewicht", "Bemerkung"])
+    
+    for e in eintraege:
+        pilot_name = f"{e.pilot.vorname} {e.pilot.nachname}" if e.pilot else "Unbekannt"
+        modell_name = e.modell.bezeichnung if e.modell else ""
+        antrieb = e.modell.antrieb.value if e.modell else ""
+        gewicht = e.modell.gewichtsklasse.value if e.modell else ""
+        
+        writer.writerow([
+            e.datum.strftime("%d.%m.%Y"),
+            e.startzeit.strftime("%H:%M"),
+            e.endzeit.strftime("%H:%M") if e.endzeit else "",
+            pilot_name,
+            "Ja" if e.ist_flugleiter else "Nein",
+            modell_name,
+            antrieb,
+            gewicht,
+            e.besonderes_ereignis or ""
+        ])
+        
+    response = Response(content=f.getvalue().encode('utf-8-sig'), media_type="text/csv")
+    response.headers["Content-Disposition"] = f"attachment; filename=flugbuch_export_{datum or 'all'}.csv"
+    return response
+
+from fpdf import FPDF
+
+@router.get("/export/pdf")
+def export_flugbuch_pdf(
+    gelaende_id: str, 
+    datum: date_type = None, 
+    db: Session = Depends(get_db), 
+    current_user: models.User = Depends(auth.get_current_user)
+):
+    if current_user.rolle != models.UserRole.admin:
+        raise HTTPException(status_code=403, detail="Nur Admins dürfen exportieren")
+
+    query = db.query(models.Flugeintrag).filter(models.Flugeintrag.gelaende_id == gelaende_id)
+    if datum:
+        query = query.filter(models.Flugeintrag.datum == datum)
+        
+    eintraege = query.order_by(models.Flugeintrag.startzeit).all()
+    
+    pdf = FPDF(orientation="L", format="A4") # Landscape for wider columns
+    pdf.add_page()
+    pdf.set_font("helvetica", "B", 16)
+    pdf.cell(0, 10, f"Flugbuch Export - {datum.strftime('%d.%m.%Y') if datum else 'Komplett'}", new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.ln(5)
+    
+    # Table header
+    pdf.set_font("helvetica", "B", 10)
+    # Define column widths
+    cols = [25, 15, 15, 40, 25, 45, 30, 80]
+    headers = ["Datum", "Start", "Ende", "Pilot", "Flugleiter", "Modell", "Antrieb", "Bemerkung"]
+    
+    for w, h in zip(cols, headers):
+        pdf.cell(w, 8, h, border=1)
+    pdf.ln()
+    
+    pdf.set_font("helvetica", "", 9)
+    # Table body
+    for e in eintraege:
+        pilot_name = f"{e.pilot.vorname} {e.pilot.nachname}" if e.pilot else "Unbekannt"
+        modell_name = e.modell.bezeichnung if e.modell else ""
+        antrieb = e.modell.antrieb.value if e.modell else ""
+        
+        row_data = [
+            e.datum.strftime("%d.%m.%Y"),
+            e.startzeit.strftime("%H:%M"),
+            e.endzeit.strftime("%H:%M") if e.endzeit else "--:--",
+            pilot_name,
+            "Ja" if e.ist_flugleiter else "Nein",
+            modell_name,
+            antrieb,
+            e.besonderes_ereignis or ""
+        ]
+        
+        for w, d in zip(cols, row_data):
+            # We use multi_cell trick for longer texts like Bemerkung, but for simplicity a standard cell, truncated if necessary
+            # Truncate strings to prevent overlapping
+            text = str(d)[:40] if str(d) else ""
+            pdf.cell(w, 8, text, border=1)
+        pdf.ln()
+        
+    pdf_content = bytes(pdf.output())
+    
+    response = Response(content=pdf_content, media_type="application/pdf")
+    response.headers["Content-Disposition"] = f"attachment; filename=flugbuch_export_{datum or 'all'}.pdf"
+    return response

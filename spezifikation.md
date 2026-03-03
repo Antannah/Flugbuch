@@ -134,7 +134,7 @@ Eine **moderne Web-App** als Ersatz, die:
 | `passwort_hash` | VARCHAR(255) | Bcrypt-Hash |
 | `hat_schulungsnachweis` | BOOLEAN, DEFAULT FALSE | Schulungsnachweis vorhanden |
 | `rolle` | ENUM('pilot', 'flugleiter', 'admin') | Berechtigungsrolle |
-| `unterschrift_pfad` | VARCHAR(255), NULLABLE | Pfad zur gespeicherten Unterschrift |
+
 | `ist_gast` | BOOLEAN, DEFAULT FALSE | Gastzugang (zeitlich begrenzt) |
 | `gast_gueltig_bis` | DATE, NULLABLE | Ablaufdatum für Gäste |
 | `created_at` | TIMESTAMP | Erstelldatum |
@@ -147,10 +147,10 @@ Eine **moderne Web-App** als Ersatz, die:
 | `id` | UUID, PK | Eindeutige ID |
 | `user_id` | UUID, FK → user | Besitzer des Modells |
 | `bezeichnung` | VARCHAR(100), NOT NULL | Name / Bezeichnung des Modells |
-| `modell_typ` | ENUM('motorflugzeug', 'segelflugzeug', 'hubschrauber', 'multikopter', 'sonstige') | Modelltyp |
-| `antrieb` | ENUM('elektro', 'verbrenner', 'turbine', 'ohne', 'sonstige') | Antriebsart |
+| `modell_typ` | ENUM('motorflugzeug', 'segelflugzeug', 'hubschrauber', 'multikopter', 'luftschiff', 'ballon', 'gleitschirm', 'rakete', 'sonstige') | Modelltyp |
+| `antrieb` | ENUM('elektro', 'verbrenner', 'turbine', 'raketenantrieb', 'ohne', 'sonstige') | Antriebsart |
 | `gewichtsklasse` | ENUM('bis_250g', 'bis_2kg', 'bis_4kg', 'bis_12kg', 'bis_25kg', 'ueber_25kg') | Gewichtsklasse |
-| `frequenz` | VARCHAR(20), NULLABLE | Frequenz/Kanal (optional, für Alt-Systeme) |
+| `frequenz` | VARCHAR(20), NULLABLE | 2.4GHz oder Frequenz/Kanal (optional, für Alt-Systeme) |
 | `registriernummer` | VARCHAR(50), NULLABLE | UAS-Registriernummer |
 | `aktiv` | BOOLEAN, DEFAULT TRUE | Modell ist aktiv / nicht gelöscht |
 | `created_at` | TIMESTAMP | Erstelldatum |

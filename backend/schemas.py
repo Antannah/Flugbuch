@@ -53,6 +53,12 @@ class UserGastCreate(BaseModel):
     nachname: str
     gast_token: str
 
+class UserRoleUpdate(BaseModel):
+    rolle: UserRole
+
+class UserPasswordUpdate(BaseModel):
+    passwort: str
+
 class UserOut(UserBase):
     id: str
     rolle: UserRole

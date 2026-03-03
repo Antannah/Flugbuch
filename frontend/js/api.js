@@ -134,6 +134,93 @@ class ApiClient {
             body: update
         });
     }
+
+    async exportFlugbuchCsv(gelaendeId, datum) {
+        let url = `${API_BASE_URL}/flugbuch/export/csv?gelaende_id=${gelaendeId}`;
+        if (datum) url += `&datum=${datum}`;
+
+        const headers = {};
+        if (this.token) Object.assign(headers, { 'Authorization': `Bearer ${this.token}` });
+
+        const response = await fetch(url, { headers });
+        if (!response.ok) {
+            let errorMsg = `Server Fehler: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.detail) errorMsg = Array.isArray(errorData.detail) ? errorData.detail.map(e => e.msg).join(', ') : errorData.detail;
+            } catch (e) { }
+            throw new Error(errorMsg);
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `flugbuch_export${datum ? '_' + datum : ''}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+        a.remove();
+    }
+
+    async exportFlugbuchPdf(gelaendeId, datum) {
+        let url = `${API_BASE_URL}/flugbuch/export/pdf?gelaende_id=${gelaendeId}`;
+        if (datum) url += `&datum=${datum}`;
+
+        const headers = {};
+        if (this.token) Object.assign(headers, { 'Authorization': `Bearer ${this.token}` });
+
+        const response = await fetch(url, { headers });
+        if (!response.ok) {
+            let errorMsg = `Server Fehler: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.detail) errorMsg = Array.isArray(errorData.detail) ? errorData.detail.map(e => e.msg).join(', ') : errorData.detail;
+            } catch (e) { }
+            throw new Error(errorMsg);
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `flugbuch_export${datum ? '_' + datum : ''}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+        a.remove();
+    }
+
+    async getUsers() {
+        return this.request('/users');
+    }
+
+    async createUser(payload) {
+        return this.request('/users', {
+            method: 'POST',
+            body: payload
+        });
+    }
+
+    async updateUserRole(id, rolle) {
+        return this.request(`/users/${id}/rolle`, {
+            method: 'PUT',
+            body: { rolle }
+        });
+    }
+
+    async updateUserPassword(id, passwort) {
+        return this.request(`/users/${id}/passwort`, {
+            method: 'PUT',
+            body: { passwort }
+        });
+    }
+
+    async deleteUser(id) {
+        return this.request(`/users/${id}`, {
+            method: 'DELETE'
+        });
+    }
 }
 
 const api = new ApiClient();
