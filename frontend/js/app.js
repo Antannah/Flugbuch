@@ -68,6 +68,7 @@ class FlugbuchApp {
         this.chartPilotHours = null;
         this.chartWeekday = null;
         this.chartTimeTrend = null;
+        this.selectedAnalysePreset = null; // 'heute', 'woche', 'monat', 'jahr'
 
         // Settings UI
         this.settingsView = document.getElementById('view-settings');
@@ -212,12 +213,28 @@ class FlugbuchApp {
                 }
                 document.getElementById('analyse-date-from').value = from;
                 document.getElementById('analyse-date-to').value = to;
+                this.selectedAnalysePreset = preset;
                 // Highlight active preset
                 document.querySelectorAll('.analyse-preset').forEach(b => b.style.opacity = '0.6');
                 btn.style.opacity = '1';
                 this.loadAnalyseData();
             });
         });
+
+        const dateFromInput = document.getElementById('analyse-date-from');
+        const dateToInput = document.getElementById('analyse-date-to');
+        if (dateFromInput) {
+            dateFromInput.addEventListener('change', () => {
+                this.selectedAnalysePreset = null;
+                document.querySelectorAll('.analyse-preset').forEach(b => b.style.opacity = '0.6');
+            });
+        }
+        if (dateToInput) {
+            dateToInput.addEventListener('change', () => {
+                this.selectedAnalysePreset = null;
+                document.querySelectorAll('.analyse-preset').forEach(b => b.style.opacity = '0.6');
+            });
+        }
 
         // Analyse Tab Switching
         const tabListe = document.getElementById('tab-liste');
@@ -743,6 +760,9 @@ class FlugbuchApp {
                 allEntries = await api.getFlugbuch(gelaendeId, today);
             }
 
+            // Guard: ensure allEntries is an array
+            if (!Array.isArray(allEntries)) allEntries = [];
+
             // Filter by search term
             if (search) {
                 allEntries = allEntries.filter(e => {
@@ -780,6 +800,7 @@ class FlugbuchApp {
             });
 
             this.analyseEntries = allEntries;
+            this.renderStatistics(allEntries);
         } catch (error) {
             tbody.innerHTML = `<tr><td colspan="6" class="empty-state" style="color:var(--danger)">Fehler: ${error.message}</td></tr>`;
         }
@@ -912,7 +933,16 @@ class FlugbuchApp {
         let trendDataArr = [];
         let chartType = 'bar';
 
-        if (diffDays <= 1) {
+        // Use selectedAnalysePreset as a hint, fallback to diffDays
+        let scale = this.selectedAnalysePreset;
+        if (!scale) {
+            if (diffDays <= 1) scale = 'heute';
+            else if (diffDays <= 7) scale = 'woche';
+            else if (diffDays <= 31) scale = 'monat';
+            else scale = 'jahr';
+        }
+
+        if (scale === 'heute') {
             // "Heute" or single day -> Hours of the day
             labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
             trendDataArr = new Array(24).fill(0);
@@ -920,7 +950,7 @@ class FlugbuchApp {
                 const hour = parseInt(e.startzeit.split(':')[0]);
                 trendDataArr[hour] += e.durationH;
             });
-        } else if (diffDays <= 7) {
+        } else if (scale === 'woche') {
             // "Diese Woche" or short range -> Weekdays
             const daysShort = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
             labels = daysShort;
@@ -929,13 +959,13 @@ class FlugbuchApp {
                 const d = new Date(e.datum).getDay();
                 trendDataArr[d] += e.durationH;
             });
-            // Rotate to start with Monday? Optional, let's keep it simple for now or shift
             const mondayStart = [1, 2, 3, 4, 5, 6, 0];
             labels = mondayStart.map(i => daysShort[i]);
             trendDataArr = mondayStart.map(i => trendDataArr[i]);
-        } else if (diffDays <= 32) {
+        } else if (scale === 'monat') {
             // "Diesen Monat" -> Days of month
-            const daysInMonth = new Date(new Date(dateFrom).getFullYear(), new Date(dateFrom).getMonth() + 1, 0).getDate();
+            const monthRef = dateFrom ? new Date(dateFrom) : new Date();
+            const daysInMonth = new Date(monthRef.getFullYear(), monthRef.getMonth() + 1, 0).getDate();
             labels = Array.from({ length: daysInMonth }, (_, i) => i + 1);
             trendDataArr = new Array(daysInMonth).fill(0);
             withDuration.forEach(e => {
