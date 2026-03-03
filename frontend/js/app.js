@@ -59,6 +59,16 @@ class FlugbuchApp {
         this.btnExportPdfBottom = document.querySelectorAll('#btn-export-pdf')[0];
         this.newUserForm = document.getElementById('new-user-form');
 
+        // Analyse UI
+        this.analyseView = document.getElementById('view-analyse');
+        this.btnAdminAnalyse = document.getElementById('btn-admin-analyse');
+        this.btnBackAnalyse = document.getElementById('btn-back-dashboard-from-analyse');
+
+        // Chart instances
+        this.chartPilotHours = null;
+        this.chartWeekday = null;
+        this.chartTimeTrend = null;
+
         // Settings UI
         this.settingsView = document.getElementById('view-settings');
         this.btnAdminSettings = document.getElementById('btn-admin-settings');
@@ -146,6 +156,90 @@ class FlugbuchApp {
 
         if (this.btnExportPdf) {
             this.btnExportPdf.addEventListener('click', () => this.handleExportPdf());
+        }
+
+        // Analyse View Nav
+        if (this.btnAdminAnalyse) {
+            this.btnAdminAnalyse.addEventListener('click', () => {
+                this.dashboardView.classList.replace('active-view', 'hidden');
+                this.analyseView.classList.replace('hidden', 'active-view');
+                // Pre-fill date filters with today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('analyse-date-from').value = today;
+                document.getElementById('analyse-date-to').value = today;
+                this.loadAnalyseData();
+            });
+        }
+        if (this.btnBackAnalyse) {
+            this.btnBackAnalyse.addEventListener('click', () => {
+                this.analyseView.classList.replace('active-view', 'hidden');
+                this.dashboardView.classList.replace('hidden', 'active-view');
+            });
+        }
+        const btnAnalyseFilter = document.getElementById('btn-analyse-filter');
+        if (btnAnalyseFilter) {
+            btnAnalyseFilter.addEventListener('click', () => this.loadAnalyseData());
+        }
+        const btnAnalyseCsv = document.getElementById('btn-analyse-export-csv');
+        if (btnAnalyseCsv) {
+            btnAnalyseCsv.addEventListener('click', () => this.handleAnalyseExportCsv());
+        }
+        const btnAnalysePdf = document.getElementById('btn-analyse-export-pdf');
+        if (btnAnalysePdf) {
+            btnAnalysePdf.addEventListener('click', () => this.handleAnalyseExportPdf());
+        }
+
+        // Analyse Preset Buttons
+        document.querySelectorAll('.analyse-preset').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const preset = btn.dataset.preset;
+                const now = new Date();
+                let from, to;
+                if (preset === 'heute') {
+                    from = to = now.toISOString().split('T')[0];
+                } else if (preset === 'woche') {
+                    const day = now.getDay() || 7; // Mon=1
+                    const monday = new Date(now);
+                    monday.setDate(now.getDate() - day + 1);
+                    from = monday.toISOString().split('T')[0];
+                    to = now.toISOString().split('T')[0];
+                } else if (preset === 'monat') {
+                    from = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+                    to = now.toISOString().split('T')[0];
+                } else if (preset === 'jahr') {
+                    from = `${now.getFullYear()}-01-01`;
+                    to = now.toISOString().split('T')[0];
+                }
+                document.getElementById('analyse-date-from').value = from;
+                document.getElementById('analyse-date-to').value = to;
+                // Highlight active preset
+                document.querySelectorAll('.analyse-preset').forEach(b => b.style.opacity = '0.6');
+                btn.style.opacity = '1';
+                this.loadAnalyseData();
+            });
+        });
+
+        // Analyse Tab Switching
+        const tabListe = document.getElementById('tab-liste');
+        const tabStatistik = document.getElementById('tab-statistik');
+        if (tabListe && tabStatistik) {
+            tabListe.addEventListener('click', () => {
+                tabListe.style.background = 'var(--primary)';
+                tabListe.style.color = 'white';
+                tabStatistik.style.background = 'rgba(15,23,42,0.6)';
+                tabStatistik.style.color = 'var(--text-secondary)';
+                document.getElementById('panel-liste').classList.remove('hidden');
+                document.getElementById('panel-statistik').classList.add('hidden');
+            });
+            tabStatistik.addEventListener('click', () => {
+                tabStatistik.style.background = 'var(--primary)';
+                tabStatistik.style.color = 'white';
+                tabListe.style.background = 'rgba(15,23,42,0.6)';
+                tabListe.style.color = 'var(--text-secondary)';
+                document.getElementById('panel-liste').classList.add('hidden');
+                document.getElementById('panel-statistik').classList.remove('hidden');
+                if (this.analyseEntries) this.renderStatistics(this.analyseEntries);
+            });
         }
 
         if (this.newModelForm) {
@@ -242,11 +336,10 @@ class FlugbuchApp {
             else this.btnAdminSettings.classList.add('hidden');
         }
 
-        // Show export buttons only for admins (bottom buttons)
-        document.querySelectorAll('#btn-export-csv, #btn-export-pdf').forEach(btn => {
-            if (isAdmin) btn.classList.remove('hidden');
-            else btn.classList.add('hidden');
-        });
+        if (this.btnAdminAnalyse) {
+            if (isAdmin) this.btnAdminAnalyse.classList.remove('hidden');
+            else this.btnAdminAnalyse.classList.add('hidden');
+        }
 
         try {
             // Load Dropdowns
@@ -616,6 +709,273 @@ class FlugbuchApp {
         } catch (error) {
             window.AppUtils.showToast('PDF Export fehlgeschlagen: ' + error.message, 'error');
         }
+    }
+
+    // --- Analyse View ---
+    async loadAnalyseData() {
+        const search = document.getElementById('analyse-search').value.trim().toLowerCase();
+        const dateFrom = document.getElementById('analyse-date-from').value;
+        const dateTo = document.getElementById('analyse-date-to').value;
+        const tbody = document.getElementById('analyse-tbody');
+        const countEl = document.getElementById('analyse-count');
+
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Lade...</td></tr>';
+
+        try {
+            const gelaendeId = this.currentGelaende.value;
+            // Fetch all entries for the date range
+            let allEntries = [];
+            if (dateFrom && dateTo) {
+                // Load day by day
+                const start = new Date(dateFrom);
+                const end = new Date(dateTo);
+                const promises = [];
+                for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                    const dateStr = d.toISOString().split('T')[0];
+                    promises.push(api.getFlugbuch(gelaendeId, dateStr));
+                }
+                const results = await Promise.all(promises);
+                allEntries = results.flat();
+            } else if (dateFrom) {
+                allEntries = await api.getFlugbuch(gelaendeId, dateFrom);
+            } else {
+                const today = new Date().toISOString().split('T')[0];
+                allEntries = await api.getFlugbuch(gelaendeId, today);
+            }
+
+            // Filter by search term
+            if (search) {
+                allEntries = allEntries.filter(e => {
+                    const pilotName = `${e.pilot?.vorname || ''} ${e.pilot?.nachname || ''}`.toLowerCase();
+                    const modellName = (e.modell?.bezeichnung || '').toLowerCase();
+                    return pilotName.includes(search) || modellName.includes(search);
+                });
+            }
+
+            countEl.textContent = allEntries.length;
+
+            if (allEntries.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">Keine Einträge gefunden</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            allEntries.forEach(e => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid var(--surface-border)';
+                const pilotName = e.pilot ? `${e.pilot.vorname} ${e.pilot.nachname}` : '–';
+                const modellName = e.ist_flugleiter ? '⛑ Flugleiter' : (e.modell?.bezeichnung || '–');
+                const startzeit = window.AppUtils.formatTime(e.startzeit);
+                const endzeit = e.endzeit ? window.AppUtils.formatTime(e.endzeit) : '–';
+                const modellTyp = e.ist_flugleiter ? 'Flugleiter' : (e.modell?.modell_typ || '–');
+                tr.innerHTML = `
+                    <td style="padding:0.5rem;">${e.datum}</td>
+                    <td style="padding:0.5rem;">${pilotName}</td>
+                    <td style="padding:0.5rem;">${modellName}</td>
+                    <td style="padding:0.5rem;">${startzeit}</td>
+                    <td style="padding:0.5rem;">${endzeit}</td>
+                    <td style="padding:0.5rem;"><span class="badge ${e.ist_flugleiter ? 'status-active' : ''}">${modellTyp}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            this.analyseEntries = allEntries;
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="6" class="empty-state" style="color:var(--danger)">Fehler: ${error.message}</td></tr>`;
+        }
+    }
+
+    async handleAnalyseExportCsv() {
+        const gelaendeId = this.currentGelaende.value;
+        const dateFrom = document.getElementById('analyse-date-from').value;
+        if (!gelaendeId || !dateFrom) {
+            window.AppUtils.showToast('Bitte ein Datum wählen', 'error');
+            return;
+        }
+        try {
+            await api.exportFlugbuchCsv(gelaendeId, dateFrom);
+            window.AppUtils.showToast('CSV Export gestartet', 'success');
+        } catch (error) {
+            window.AppUtils.showToast('CSV Export fehlgeschlagen: ' + error.message, 'error');
+        }
+    }
+
+    async handleAnalyseExportPdf() {
+        const gelaendeId = this.currentGelaende.value;
+        const dateFrom = document.getElementById('analyse-date-from').value;
+        if (!gelaendeId || !dateFrom) {
+            window.AppUtils.showToast('Bitte ein Datum wählen', 'error');
+            return;
+        }
+        try {
+            await api.exportFlugbuchPdf(gelaendeId, dateFrom);
+            window.AppUtils.showToast('PDF Export gestartet', 'success');
+        } catch (error) {
+            window.AppUtils.showToast('PDF Export fehlgeschlagen: ' + error.message, 'error');
+        }
+    }
+
+    // --- Statistics ---
+    renderStatistics(entries) {
+        // Helper: parse time string "HH:MM:SS" to hours
+        const timeToHours = (timeStr) => {
+            if (!timeStr) return 0;
+            const parts = timeStr.split(':');
+            return parseInt(parts[0]) + parseInt(parts[1]) / 60 + (parts[2] ? parseInt(parts[2]) / 3600 : 0);
+        };
+
+        // Calculate duration per entry in hours
+        const withDuration = entries.filter(e => e.endzeit).map(e => ({
+            ...e,
+            durationH: timeToHours(e.endzeit) - timeToHours(e.startzeit)
+        })).filter(e => e.durationH > 0);
+
+        // KPIs
+        const totalFlights = entries.length;
+        const totalHours = withDuration.reduce((sum, e) => sum + e.durationH, 0);
+        const pilotDays = new Set(entries.map(e => `${e.pilot?.id}_${e.datum}`));
+        const uniquePilots = new Set(entries.filter(e => e.pilot).map(e => e.pilot.id));
+
+        document.getElementById('stat-total-flights').textContent = totalFlights;
+        document.getElementById('stat-flight-hours').textContent = totalHours.toFixed(1) + 'h';
+        document.getElementById('stat-visitor-days').textContent = pilotDays.size;
+        document.getElementById('stat-active-pilots').textContent = uniquePilots.size;
+
+        // --- Chart 1: Hours per Pilot (bar) ---
+        const pilotHoursMap = {};
+        withDuration.forEach(e => {
+            const name = e.pilot ? `${e.pilot.vorname} ${e.pilot.nachname}` : 'Unbekannt';
+            pilotHoursMap[name] = (pilotHoursMap[name] || 0) + e.durationH;
+        });
+        const pilotNames = Object.keys(pilotHoursMap).sort((a, b) => pilotHoursMap[b] - pilotHoursMap[a]);
+        const pilotHoursData = pilotNames.map(n => +pilotHoursMap[n].toFixed(1));
+
+        if (this.chartPilotHours) this.chartPilotHours.destroy();
+        this.chartPilotHours = new Chart(document.getElementById('chart-pilot-hours'), {
+            type: 'bar',
+            data: {
+                labels: pilotNames,
+                datasets: [{
+                    label: 'Stunden',
+                    data: pilotHoursData,
+                    backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    y: { ticks: { color: '#e2e8f0', font: { size: 11 } }, grid: { display: false } }
+                }
+            }
+        });
+
+        // --- Chart 2: Weekday distribution (doughnut) ---
+        const weekdayCounts = { 'Wochentag': 0, 'Wochenende': 0 };
+        entries.forEach(e => {
+            const day = new Date(e.datum).getDay();
+            if (day === 0 || day === 6) weekdayCounts['Wochenende']++;
+            else weekdayCounts['Wochentag']++;
+        });
+
+        if (this.chartWeekday) this.chartWeekday.destroy();
+        this.chartWeekday = new Chart(document.getElementById('chart-weekday'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Wochentag', 'Wochenende'],
+                datasets: [{
+                    data: [weekdayCounts['Wochentag'], weekdayCounts['Wochenende']],
+                    backgroundColor: ['rgba(37, 99, 235, 0.7)', 'rgba(234, 179, 8, 0.7)'],
+                    borderColor: ['rgba(37, 99, 235, 1)', 'rgba(234, 179, 8, 1)'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#e2e8f0', padding: 16 } }
+                }
+            }
+        });
+
+        // --- Chart 3: Flight Hours Trend (Adaptive) ---
+        const dateFrom = document.getElementById('analyse-date-from').value;
+        const dateTo = document.getElementById('analyse-date-to').value;
+        const diffDays = dateFrom && dateTo ? (new Date(dateTo) - new Date(dateFrom)) / (1000 * 3600 * 24) : 0;
+
+        let labels = [];
+        let trendDataArr = [];
+        let chartType = 'bar';
+
+        if (diffDays <= 1) {
+            // "Heute" or single day -> Hours of the day
+            labels = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+            trendDataArr = new Array(24).fill(0);
+            withDuration.forEach(e => {
+                const hour = parseInt(e.startzeit.split(':')[0]);
+                trendDataArr[hour] += e.durationH;
+            });
+        } else if (diffDays <= 7) {
+            // "Diese Woche" or short range -> Weekdays
+            const daysShort = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+            labels = daysShort;
+            trendDataArr = new Array(7).fill(0);
+            withDuration.forEach(e => {
+                const d = new Date(e.datum).getDay();
+                trendDataArr[d] += e.durationH;
+            });
+            // Rotate to start with Monday? Optional, let's keep it simple for now or shift
+            const mondayStart = [1, 2, 3, 4, 5, 6, 0];
+            labels = mondayStart.map(i => daysShort[i]);
+            trendDataArr = mondayStart.map(i => trendDataArr[i]);
+        } else if (diffDays <= 32) {
+            // "Diesen Monat" -> Days of month
+            const daysInMonth = new Date(new Date(dateFrom).getFullYear(), new Date(dateFrom).getMonth() + 1, 0).getDate();
+            labels = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+            trendDataArr = new Array(daysInMonth).fill(0);
+            withDuration.forEach(e => {
+                const day = new Date(e.datum).getDate();
+                trendDataArr[day - 1] += e.durationH;
+            });
+        } else {
+            // "Dieses Jahr" or long range -> Months
+            labels = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+            trendDataArr = new Array(12).fill(0);
+            withDuration.forEach(e => {
+                const month = new Date(e.datum).getMonth();
+                trendDataArr[month] += e.durationH;
+            });
+        }
+
+        if (this.chartTimeTrend) this.chartTimeTrend.destroy();
+        this.chartTimeTrend = new Chart(document.getElementById('chart-time-trend'), {
+            type: chartType,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Flugstunden',
+                    data: trendDataArr.map(v => +v.toFixed(1)),
+                    backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                    borderColor: 'rgba(34, 197, 94, 1)',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: 'h', color: '#94a3b8' } }
+                }
+            }
+        });
     }
 
     // --- User Management Logic ---

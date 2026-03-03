@@ -758,3 +758,30 @@ body {
         text-align: center;
     }
 }
+
+/* Analyse Table */
+.analyse-table th {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.analyse-table td {
+    color: var(--text-primary);
+}
+
+.analyse-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+@media (max-width: 700px) {
+    #panel-statistik .glass-panel canvas {
+        max-height: 200px;
+    }
+
+    #panel-statistik>div:nth-child(2) {
+        grid-template-columns: 1fr !important;
+    }
+}

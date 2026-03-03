@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
@@ -55,6 +56,8 @@
                 <div class="nav-user">
                     <button id="btn-admin-users" class="btn-icon hidden" title="Benutzerverwaltung (Admin)"><i
                             class="fa-solid fa-users"></i></button>
+                    <button id="btn-admin-analyse" class="btn-icon hidden" title="Analyse (Admin)"><i
+                            class="fa-solid fa-chart-line"></i></button>
                     <button id="btn-admin-settings" class="btn-icon hidden" title="Einstellungen (Admin)"><i
                             class="fa-solid fa-gear"></i></button>
                     <div class="profile-dropdown">
@@ -234,20 +237,168 @@
                         <div class="empty-state">Lade Flugbuch...</div>
                     </div>
 
-                    <div
-                        style="margin-top: 1rem; text-align: right; display: flex; gap: 0.5rem; justify-content: flex-end;">
-                        <button id="btn-export-csv" class="btn btn-secondary tooltip"
-                            title="Das Flugbuch für diesen Tag als CSV exportieren">
-                            <i class="fa-solid fa-file-csv"></i> CSV Export
-                        </button>
-                        <button id="btn-export-pdf" class="btn btn-secondary tooltip"
-                            title="Das Flugbuch für diesen Tag als PDF exportieren">
-                            <i class="fa-solid fa-file-pdf"></i> PDF Export
-                        </button>
-                    </div>
                 </section>
             </main>
         </div>
+    </div>
+
+    <!-- Analyse View (Admin) -->
+    <div id="view-analyse" class="view hidden">
+        <nav class="glass-nav">
+            <div class="nav-brand">
+                <button id="btn-back-dashboard-from-analyse" class="btn-icon" title="Zurück"><i
+                        class="fa-solid fa-arrow-left"></i></button>
+                <span>Analyse</span>
+            </div>
+        </nav>
+
+        <main class="dashboard-content" style="max-width: 900px; margin: 0 auto;">
+            <section class="glass-panel" style="padding: 1.25rem; margin-bottom: 1.5rem;">
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+                    <button class="btn btn-secondary analyse-preset" data-preset="heute"
+                        style="font-size:0.8rem; padding:0.4rem 0.8rem;">Heute</button>
+                    <button class="btn btn-secondary analyse-preset" data-preset="woche"
+                        style="font-size:0.8rem; padding:0.4rem 0.8rem;">Diese Woche</button>
+                    <button class="btn btn-secondary analyse-preset" data-preset="monat"
+                        style="font-size:0.8rem; padding:0.4rem 0.8rem;">Diesen Monat</button>
+                    <button class="btn btn-secondary analyse-preset" data-preset="jahr"
+                        style="font-size:0.8rem; padding:0.4rem 0.8rem;">Dieses Jahr</button>
+                </div>
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:flex-end;">
+                    <div class="input-group" style="flex:2; min-width:180px;">
+                        <label
+                            style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Suche</label>
+                        <input type="text" id="analyse-search" placeholder="Pilot, Modell..." class="input"
+                            style="padding:0.6rem 0.75rem;">
+                    </div>
+                    <div class="input-group" style="flex:1; min-width:140px;">
+                        <label style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Von</label>
+                        <input type="date" id="analyse-date-from" class="input" style="padding:0.6rem 0.75rem;">
+                    </div>
+                    <div class="input-group" style="flex:1; min-width:140px;">
+                        <label style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.25rem;">Bis</label>
+                        <input type="date" id="analyse-date-to" class="input" style="padding:0.6rem 0.75rem;">
+                    </div>
+                    <button id="btn-analyse-filter" class="btn btn-primary" style="padding:0.6rem 1.25rem;">
+                        <i class="fa-solid fa-filter"></i> Filtern
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tabs -->
+            <div class="analyse-tabs"
+                style="display:flex; gap:0; margin-bottom:1.25rem; border-radius:8px; overflow:hidden; border:1px solid var(--surface-border);">
+                <button id="tab-liste" class="analyse-tab active"
+                    style="flex:1; padding:0.6rem 1rem; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; transition:var(--transition); background:var(--primary); color:white;">
+                    <i class="fa-solid fa-list"></i> Liste
+                </button>
+                <button id="tab-statistik" class="analyse-tab"
+                    style="flex:1; padding:0.6rem 1rem; border:none; cursor:pointer; font-weight:600; font-size:0.85rem; transition:var(--transition); background:rgba(15,23,42,0.6); color:var(--text-secondary);">
+                    <i class="fa-solid fa-chart-bar"></i> Statistiken
+                </button>
+            </div>
+
+            <!-- Tab: Liste -->
+            <div id="panel-liste">
+                <section class="log-section">
+                    <div class="section-title">
+                        <h2>Flugeinträge</h2>
+                        <span id="analyse-count" class="badge">0</span>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table id="analyse-table" class="analyse-table"
+                            style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                            <thead>
+                                <tr style="border-bottom:2px solid var(--surface-border); text-align:left;">
+                                    <th style="padding:0.6rem 0.5rem;">Datum</th>
+                                    <th style="padding:0.6rem 0.5rem;">Pilot</th>
+                                    <th style="padding:0.6rem 0.5rem;">Modell</th>
+                                    <th style="padding:0.6rem 0.5rem;">Start</th>
+                                    <th style="padding:0.6rem 0.5rem;">Ende</th>
+                                    <th style="padding:0.6rem 0.5rem;">Modelltyp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analyse-tbody">
+                                <tr>
+                                    <td colspan="6" class="empty-state">Filter anwenden um Einträge zu laden...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <div style="margin-top:1rem; display:flex; gap:0.5rem; justify-content:flex-end;">
+                    <button id="btn-analyse-export-csv" class="btn btn-secondary">
+                        <i class="fa-solid fa-file-csv"></i> CSV Export
+                    </button>
+                    <button id="btn-analyse-export-pdf" class="btn btn-secondary">
+                        <i class="fa-solid fa-file-pdf"></i> PDF Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab: Statistiken -->
+            <div id="panel-statistik" class="hidden">
+                <div class="stats-grid"
+                    style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+                    <div class="glass-panel" style="padding:1rem; text-align:center;">
+                        <div
+                            style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
+                            Flüge gesamt</div>
+                        <div id="stat-total-flights"
+                            style="font-size:1.8rem; font-weight:700; color:var(--primary); margin-top:0.25rem;">0</div>
+                    </div>
+                    <div class="glass-panel" style="padding:1rem; text-align:center;">
+                        <div
+                            style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
+                            Flugstunden</div>
+                        <div id="stat-flight-hours"
+                            style="font-size:1.8rem; font-weight:700; color:var(--success); margin-top:0.25rem;">0h
+                        </div>
+                    </div>
+                    <div class="glass-panel" style="padding:1rem; text-align:center;">
+                        <div
+                            style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
+                            Besuchertage</div>
+                        <div id="stat-visitor-days"
+                            style="font-size:1.8rem; font-weight:700; color:var(--warning); margin-top:0.25rem;">0</div>
+                    </div>
+                    <div class="glass-panel" style="padding:1rem; text-align:center;">
+                        <div
+                            style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">
+                            Aktive Piloten</div>
+                        <div id="stat-active-pilots"
+                            style="font-size:1.8rem; font-weight:700; color:var(--info, #38bdf8); margin-top:0.25rem;">0
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem;">
+                    <div class="glass-panel" style="padding:1.25rem;">
+                        <h3 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;"><i
+                                class="fa-solid fa-user"></i> Flugstunden pro Pilot</h3>
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="chart-pilot-hours"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-panel" style="padding:1.25rem;">
+                        <h3 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;"><i
+                                class="fa-solid fa-calendar-week"></i> Wochentag vs. Wochenende</h3>
+                        <div style="height: 250px; position: relative;">
+                            <canvas id="chart-weekday"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding:1.25rem; margin-top:1.25rem;">
+                    <h3 style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:1rem;"><i
+                            class="fa-solid fa-chart-line"></i> Flugstunden Verlauf</h3>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="chart-time-trend"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
     <!-- Model Management View -->

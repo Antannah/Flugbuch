@@ -85,23 +85,29 @@ def export_flugbuch_csv(
     
     f = StringIO()
     writer = csv.writer(f, delimiter=";")
-    writer.writerow(["Datum", "Start", "Ende", "Pilot", "Flugleiter", "Modell", "Antrieb", "Gewicht", "Bemerkung"])
+    writer.writerow(["Datum", "Start", "Ende", "Pilot", "Schulungsnachweis", "Flugleiter", "Modell", "Antrieb", "Gewichtsklasse", "Frequenz", "Reg.Nr. >25kg", "Bemerkung"])
     
     for e in eintraege:
         pilot_name = f"{e.pilot.vorname} {e.pilot.nachname}" if e.pilot else "Unbekannt"
+        schulung = "Ja" if (e.pilot and e.pilot.hat_schulungsnachweis) else "Nein"
         modell_name = e.modell.bezeichnung if e.modell else ""
         antrieb = e.modell.antrieb.value if e.modell else ""
         gewicht = e.modell.gewichtsklasse.value if e.modell else ""
+        frequenz = e.modell.frequenz if e.modell and e.modell.frequenz else ""
+        reg_nr = e.modell.registriernummer if e.modell and e.modell.registriernummer else ""
         
         writer.writerow([
             e.datum.strftime("%d.%m.%Y"),
             e.startzeit.strftime("%H:%M"),
             e.endzeit.strftime("%H:%M") if e.endzeit else "",
             pilot_name,
+            schulung,
             "Ja" if e.ist_flugleiter else "Nein",
             modell_name,
             antrieb,
             gewicht,
+            frequenz,
+            reg_nr,
             e.besonderes_ereignis or ""
         ])
         
@@ -134,38 +140,44 @@ def export_flugbuch_pdf(
     pdf.ln(5)
     
     # Table header
-    pdf.set_font("helvetica", "B", 10)
-    # Define column widths
-    cols = [25, 15, 15, 40, 25, 45, 30, 80]
-    headers = ["Datum", "Start", "Ende", "Pilot", "Flugleiter", "Modell", "Antrieb", "Bemerkung"]
+    pdf.set_font("helvetica", "B", 8)
+    # Define column widths (landscape A4 = ~277mm usable)
+    cols = [20, 12, 12, 32, 12, 18, 32, 22, 22, 18, 22, 55]
+    headers = ["Datum", "Start", "Ende", "Pilot", "Schulg.", "Flugleiter", "Modell", "Antrieb", "Gewicht", "Freq.", "Reg.Nr.", "Bemerkung"]
     
     for w, h in zip(cols, headers):
-        pdf.cell(w, 8, h, border=1)
+        pdf.cell(w, 7, h, border=1)
     pdf.ln()
     
-    pdf.set_font("helvetica", "", 9)
+    pdf.set_font("helvetica", "", 7)
     # Table body
     for e in eintraege:
         pilot_name = f"{e.pilot.vorname} {e.pilot.nachname}" if e.pilot else "Unbekannt"
+        schulung = "Ja" if (e.pilot and e.pilot.hat_schulungsnachweis) else "Nein"
         modell_name = e.modell.bezeichnung if e.modell else ""
         antrieb = e.modell.antrieb.value if e.modell else ""
+        gewicht = e.modell.gewichtsklasse.value if e.modell else ""
+        frequenz = e.modell.frequenz if e.modell and e.modell.frequenz else ""
+        reg_nr = e.modell.registriernummer if e.modell and e.modell.registriernummer else ""
         
         row_data = [
             e.datum.strftime("%d.%m.%Y"),
             e.startzeit.strftime("%H:%M"),
             e.endzeit.strftime("%H:%M") if e.endzeit else "--:--",
             pilot_name,
+            schulung,
             "Ja" if e.ist_flugleiter else "Nein",
             modell_name,
             antrieb,
+            gewicht,
+            frequenz,
+            reg_nr,
             e.besonderes_ereignis or ""
         ]
         
         for w, d in zip(cols, row_data):
-            # We use multi_cell trick for longer texts like Bemerkung, but for simplicity a standard cell, truncated if necessary
-            # Truncate strings to prevent overlapping
-            text = str(d)[:40] if str(d) else ""
-            pdf.cell(w, 8, text, border=1)
+            text = str(d)[:30] if str(d) else ""
+            pdf.cell(w, 7, text, border=1)
         pdf.ln()
         
     pdf_content = bytes(pdf.output())

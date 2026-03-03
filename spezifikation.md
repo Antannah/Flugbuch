@@ -258,15 +258,17 @@ stateDiagram-v2
 │  ← Analyse                                      │
 │─────────────────────────────────────────────────│
 │                                                 │
+│  [Heute] [Woche] [Monat] [Jahr] (Schnellfilter) │
+│                                                 │
 │  Suche: [________]  Von: [____]  Bis: [____]   │
 │                              [ 🔍 Filtern ]     │
 │                                                 │
 │  ── Flugeinträge ────────────── [42]            │
 │  ┌──────┬──────┬────────┬─────┬─────┬────────┐ │
-│  │Datum │Pilot │Modell  │Start│Ende │Typ     │ │
+│  │Datum │Pilot │Modell  │Start│Ende │Modelltyp│ │
 │  ├──────┼──────┼────────┼─────┼─────┼────────┤ │
-│  │03.03.│Max M.│Zephyr  │10:30│12:15│Modell  │ │
-│  │03.03.│Peter │⛑ FL   │08:00│10:00│FL      │ │
+│  │03.03.│Max M.│Zephyr  │10:30│12:15│Segler  │ │
+│  │03.03.│Peter │⛑ FL   │08:00│10:00│Flugl.  │ │
 │  └──────┴──────┴────────┴─────┴─────┴────────┘ │
 │                                                 │
 │                    [ 📄 CSV ]  [ 📄 PDF ]       │
@@ -274,10 +276,12 @@ stateDiagram-v2
 ```
 
 **Funktionen:**
-- **Suchfeld:** Filtert nach Pilotname oder Modellbezeichnung
-- **Datumsbereich:** Von/Bis-Filter für tages- oder zeitraumübergreifende Auswertung
-- **Tabellenansicht:** Alle Flugeinträge in tabellarischer Form
-- **CSV/PDF-Export:** Buttons zum Export der gefilterten Daten
+- **Schnellfilter:** Vordefinierte Zeiträume (Heute, Woche, Monat, Jahr).
+- **Suchfeld:** Filtert nach Pilotname oder Modellbezeichnung.
+- **Datumsbereich:** Von/Bis-Filter für manuelle Auswertung.
+- **Tabellenansicht:** Alle Flugeinträge mit Fokus auf Modelltyp.
+- **Statistiken:** Adaptive Diagramme (stündlich/täglich/monatlich) je nach Belastung.
+- **CSV/PDF-Export:** Buttons zum Export der gefilterten Daten.
 
 ---
 
