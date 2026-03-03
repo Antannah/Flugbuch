@@ -57,6 +57,14 @@ class FlugbuchApp {
         this.btnExportPdf = document.getElementById('btn-export-pdf');
         this.newUserForm = document.getElementById('new-user-form');
 
+        // Settings UI
+        this.settingsView = document.getElementById('view-settings');
+        this.btnAdminSettings = document.getElementById('btn-admin-settings');
+        this.btnBackSettings = document.getElementById('btn-back-dashboard-from-settings');
+        this.settingsForm = document.getElementById('settings-form');
+        this.settingsNameInput = document.getElementById('settings-flugplatz-name');
+        this.settingsAddrInput = document.getElementById('settings-adresse');
+
         this.setupEventListeners();
 
         // Initialize Date
@@ -141,20 +149,59 @@ class FlugbuchApp {
         if (this.newUserForm) {
             this.newUserForm.addEventListener('submit', (e) => this.handleCreateUser(e));
         }
+
+        if (this.btnAdminSettings) {
+            this.btnAdminSettings.addEventListener('click', () => {
+                this.dashboardView.classList.replace('active-view', 'hidden');
+                this.settingsView.classList.replace('hidden', 'active-view');
+                this.renderSettingsView();
+            });
+        }
+
+        if (this.btnBackSettings) {
+            this.btnBackSettings.addEventListener('click', () => {
+                this.settingsView.classList.replace('active-view', 'hidden');
+                this.dashboardView.classList.replace('hidden', 'active-view');
+            });
+        }
+
+        if (this.settingsForm) {
+            this.settingsForm.addEventListener('submit', (e) => this.handleSaveSettings(e));
+        }
     }
 
     async initDashboard(user) {
         this.currentUser = user;
 
-        if (this.btnAdminUsers && user.rolle === 'admin') {
-            this.btnAdminUsers.classList.remove('hidden');
+        // Reset and check admin visibility
+        const isAdmin = user.rolle === 'admin';
+
+        if (this.btnAdminUsers) {
+            if (isAdmin) this.btnAdminUsers.classList.remove('hidden');
+            else this.btnAdminUsers.classList.add('hidden');
+        }
+
+        if (this.btnAdminSettings) {
+            if (isAdmin) this.btnAdminSettings.classList.remove('hidden');
+            else this.btnAdminSettings.classList.add('hidden');
+        }
+
+        // Show export buttons only for admins
+        if (this.btnExportCsv) {
+            if (isAdmin) this.btnExportCsv.classList.remove('hidden');
+            else this.btnExportCsv.classList.add('hidden');
+        }
+        if (this.btnExportPdf) {
+            if (isAdmin) this.btnExportPdf.classList.remove('hidden');
+            else this.btnExportPdf.classList.add('hidden');
         }
 
         try {
             // Load Dropdowns
             await Promise.all([
                 this.loadGelaende(),
-                this.loadModelle()
+                this.loadModelle(),
+                this.loadSettings()
             ]);
 
             // Load initial List
@@ -243,7 +290,7 @@ class FlugbuchApp {
                     <div class="flight-pilot">
                         <span class="status-indicator ${isDone ? 'status-done' : 'status-active'}"></span>
                         <i class="fa-solid ${icon}"></i> 
-                        Test-Pilot (Da API hier noch keinen User-Include macht)
+                        ${entry.pilot ? entry.pilot.vorname + ' ' + entry.pilot.nachname : 'Unbekannter Pilot'}
                     </div>
                     <div class="flight-model">${modelText}</div>
                 </div>
@@ -478,7 +525,10 @@ class FlugbuchApp {
                         </div>
                         <div class="flight-model">
                             <span class="badge" style="background:rgba(255, 255, 255, 0.1); color:var(--text-secondary);">${u.email || 'Keine E-Mail'}</span>
-                            <span class="badge ${isAdmin ? 'status-active' : ''}">${u.rolle}</span>
+                            <span class="badge ${u.rolle === 'admin' ? 'status-active' : (u.rolle === 'flugleiter' ? 'status-warning' : '')}" 
+                                  style="${u.rolle === 'flugleiter' ? 'background:rgba(245, 158, 11, 0.2); color:var(--warning);' : ''}">
+                                ${u.rolle.toUpperCase()}
+                            </span>
                         </div>
                     </div>
                     ${!isMe ? `
@@ -546,6 +596,63 @@ class FlugbuchApp {
 
         } catch (error) {
             this.usersListEl.innerHTML = `<div class="empty-state" style="color:var(--danger)">Fehler beim Laden der Benutzer: ${error.message}</div>`;
+        }
+    }
+
+    // --- Settings Logic ---
+    async loadSettings() {
+        try {
+            const config = await api.getSettings();
+            this.appSettings = config;
+            this.updateDynamicText();
+        } catch (error) {
+            console.error("Settings load failed:", error);
+        }
+    }
+
+    updateDynamicText() {
+        if (!this.appSettings) return;
+
+        const name = this.appSettings.flugplatz_name;
+        // Update H1 in Login
+        const loginH1 = document.querySelector('#view-login h1');
+        if (loginH1) loginH1.textContent = name;
+
+        // Update Confirm text
+        const legalText = document.querySelector('.legal-checkbox span:not(.custom-checkbox)');
+        if (legalText) {
+            legalText.textContent = `Ich bestätige die Geltung der StRfF und der Flugordnung der ${name} e.V.`;
+        }
+    }
+
+    async renderSettingsView() {
+        try {
+            const config = await api.getSettings();
+            this.settingsNameInput.value = config.flugplatz_name;
+            this.settingsAddrInput.value = config.adresse;
+        } catch (error) {
+            window.AppUtils.showToast("Fehler beim Laden der Einstellungen", "error");
+        }
+    }
+
+    async handleSaveSettings(e) {
+        e.preventDefault();
+        const payload = {
+            flugplatz_name: this.settingsNameInput.value,
+            adresse: this.settingsAddrInput.value
+        };
+
+        const btn = this.settingsForm.querySelector('button[type="submit"]');
+        btn.disabled = true;
+
+        try {
+            await api.updateSettings(payload);
+            window.AppUtils.showToast("Einstellungen gespeichert", "success");
+            await this.loadSettings(); // Sync local state
+        } catch (error) {
+            window.AppUtils.showToast(error.message, "error");
+        } finally {
+            btn.disabled = false;
         }
     }
 }

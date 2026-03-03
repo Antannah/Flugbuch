@@ -3,6 +3,19 @@ from typing import Optional, List
 from datetime import date, time
 from models import UserRole, Antriebsart, Gewichtsklasse, ModellTyp
 
+# --- System Settings ---
+class SystemSettingsBase(BaseModel):
+    flugplatz_name: str
+    adresse: str
+
+class SystemSettingsOut(SystemSettingsBase):
+    id: str
+    class Config:
+        from_attributes = True
+
+class SystemSettingsUpdate(SystemSettingsBase):
+    pass
+
 # --- Gelaende ---
 class GelaendeBase(BaseModel):
     bezeichnung: str
@@ -84,10 +97,18 @@ class FlugeintragUpdate(BaseModel):
     endzeit: time
     besonderes_ereignis: Optional[str] = None
 
+class UserShort(BaseModel):
+    vorname: str
+    nachname: str
+    class Config:
+        from_attributes = True
+
 class FlugeintragOut(FlugeintragBase):
     id: str
     user_id: str
     gelaende_id: str
     modell_id: Optional[str] = None
+    pilot: Optional[UserShort] = None
+    modell: Optional[ModellOut] = None
     class Config:
         from_attributes = True

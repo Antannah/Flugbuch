@@ -221,6 +221,18 @@ class ApiClient {
             method: 'DELETE'
         });
     }
+
+    // Settings
+    async getSettings() {
+        return this.request('/settings');
+    }
+
+    async updateSettings(data) {
+        return this.request('/settings', {
+            method: 'PUT',
+            body: data
+        });
+    }
 }
 
 const api = new ApiClient();

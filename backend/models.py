@@ -9,6 +9,13 @@ class UserRole(str, enum.Enum):
     flugleiter = "flugleiter"
     admin = "admin"
 
+class SystemSettings(Base):
+    __tablename__ = "system_settings"
+    
+    id = Column(String, primary_key=True, default="default")
+    flugplatz_name = Column(String(100), default="MFG Kitzingen")
+    adresse = Column(String(255), default="Flugplatzstraße 1, 97318 Kitzingen")
+
 class ModellTyp(str, enum.Enum):
     motorflugzeug = "motorflugzeug"
     segelflugzeug = "segelflugzeug"

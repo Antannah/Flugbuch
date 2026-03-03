@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List
 from datetime import date as date_type
 import models, schemas, auth
@@ -14,7 +14,10 @@ def get_flugbuch(
     db: Session = Depends(get_db), 
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    query = db.query(models.Flugeintrag).filter(models.Flugeintrag.gelaende_id == gelaende_id)
+    query = db.query(models.Flugeintrag).options(
+        joinedload(models.Flugeintrag.pilot),
+        joinedload(models.Flugeintrag.modell)
+    ).filter(models.Flugeintrag.gelaende_id == gelaende_id)
     if datum:
         query = query.filter(models.Flugeintrag.datum == datum)
         

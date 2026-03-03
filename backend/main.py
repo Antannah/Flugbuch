@@ -5,7 +5,7 @@ import os
 from database import engine, Base
 import models
 import schemas
-from routers import auth, users, modelle, gelaende, flugeintraege
+from routers import auth, users, modelle, gelaende, flugeintraege, settings
 
 # Create tables if they don't exist
 models.Base.metadata.create_all(bind=engine)
@@ -35,6 +35,7 @@ app.include_router(users.router)
 app.include_router(modelle.router)
 app.include_router(gelaende.router)
 app.include_router(flugeintraege.router)
+app.include_router(settings.router)
 
 # Mount frontend
 frontend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend")

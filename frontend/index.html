@@ -51,9 +51,20 @@
                     <i class="fa-solid fa-plane"></i>
                     <span>Flugbuch</span>
                 </div>
+                <div class="actions">
+                    <button id="btn-export-csv" class="btn btn-secondary btn-icon hidden" title="Export als CSV"><i
+                            class="fa-solid fa-file-csv"></i></button>
+                    <button id="btn-export-pdf" class="btn btn-secondary btn-icon hidden" title="Export als PDF"><i
+                            class="fa-solid fa-file-pdf"></i></button>
+                    <button id="btn-manage-models" class="btn btn-primary">
+                        <i class="fa-solid fa-plane-departure"></i> Modelle
+                    </button>
+                </div>
                 <div class="nav-user">
                     <button id="btn-admin-users" class="btn-icon hidden" title="Benutzerverwaltung (Admin)"><i
                             class="fa-solid fa-users"></i></button>
+                    <button id="btn-admin-settings" class="btn-icon hidden" title="Einstellungen (Admin)"><i
+                            class="fa-solid fa-gear"></i></button>
                     <span id="nav-user-name" style="margin-left: 0.5rem; margin-right: 0.5rem;">Pilot</span>
                     <button id="btn-logout" class="btn-icon" title="Abmelden"><i
                             class="fa-solid fa-right-from-bracket"></i></button>
@@ -285,6 +296,51 @@
                     <!-- Populated by JS -->
                     <div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i> Lade...</div>
                 </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Admin Settings View -->
+    <div id="view-settings" class="view hidden">
+        <nav class="glass-nav">
+            <div class="nav-brand">
+                <button id="btn-back-dashboard-from-settings" class="btn-icon" title="Zurück"><i
+                        class="fa-solid fa-arrow-left"></i></button>
+                <span>System-Einstellungen</span>
+            </div>
+        </nav>
+
+        <main class="dashboard-content">
+            <section class="settings-section glass-card">
+                <h2>Allgemeine Einstellungen</h2>
+                <p class="subtitle" style="margin-bottom: 2rem; color: var(--text-secondary);">Hier können globale
+                    Parameter für den Flugplatz konfiguriert werden.</p>
+
+                <form id="settings-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label for="setting-flugplatz-name">Name des Flugplatzes</label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <input type="text" id="setting-flugplatz-name" placeholder="z.B. MFG Kitzingen e.V."
+                                required class="input">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="setting-adresse">Adresse / Standort</label>
+                        <div class="input-group">
+                            <i class="fa-solid fa-map-pin"></i>
+                            <input type="text" id="setting-adresse" placeholder="Straße, PLZ Ort" required
+                                class="input">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--surface-border);">
+                        <button type="submit" class="btn btn-primary btn-large btn-block" id="btn-save-settings">
+                            <i class="fa-solid fa-save"></i> Einstellungen speichern
+                        </button>
+                    </div>
+                </form>
             </section>
         </main>
     </div>

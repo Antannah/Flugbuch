@@ -8,8 +8,10 @@ router = APIRouter(prefix="/api/users", tags=["users"])
 
 @router.get("", response_model=List[schemas.UserOut])
 def get_users(db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
-    users = db.query(models.User).all()
-    return users
+    if current_user.rolle == models.UserRole.admin:
+        return db.query(models.User).all()
+    # Reguläre Nutzer sehen nur sich selbst
+    return [current_user]
 
 @router.post("", response_model=schemas.UserOut, status_code=status.HTTP_201_CREATED)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):

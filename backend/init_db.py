@@ -36,6 +36,17 @@ try:
         db.add(gelaende)
         print("Test-Gelände angelegt: MFG Kitzingen Hauptgelände")
         
+    # Check if settings exists
+    settings = db.query(models.SystemSettings).first()
+    if not settings:
+        settings = models.SystemSettings(
+            id="default",
+            flugplatz_name="MFG Kitzingen",
+            adresse="Flugplatzstraße 1, 97318 Kitzingen"
+        )
+        db.add(settings)
+        print("Default System-Settings angelegt.")
+        
     db.commit()
     print("Test-Datenbank erfolgreich initialisiert!")
 except Exception as e:
