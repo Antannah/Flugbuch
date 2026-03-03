@@ -302,16 +302,18 @@ Jeder Benutzer kann über ein **Dropdown-Menü** (Klick auf den eigenen Namen in
 
 | Einstellung | Beschreibung |
 |---|---|
-| **Vorname / Nachname** | Eigenes Profil bearbeiten |
-| **Schulungsnachweis** | Toggle: Schulungsnachweis vorhanden (Selbstauskunft) |
-| **Flugordnung** | Toggle: Bestätigung der StRfF und Flugordnung |
+| **Vorname / Nachname / E-Mail** | Eigene Kontaktdaten bearbeiten |
+| **Schulungsnachweis / Flugordnung** | Toggles zur Bestätigung von Nachweis und Flugordnung (gespeichert über zentralen Save-Button) |
 | **Passwort** | Eigenes Passwort ändern |
 
 > **Hinweis:** Der Schulungsnachweis und die Flugordnungsbestätigung werden nicht bei der Benutzererstellung durch den Admin gesetzt, sondern vom Benutzer selbst im Profil aktiviert.
 
-### 5.3 Benutzerverwaltung (Admin)
+### 5.3 Benutzerverwaltung (Admin & Self-Service)
 
-Admins können neue Benutzer anlegen (Vorname, Nachname, E-Mail, Passwort) und Admin-Rechte über einen **Toggle-Schalter** vergeben/entziehen.
+Das zentrale Formular "Benutzerdaten" dient sowohl der **Neuanlage** als auch der **Änderung** von Benutzern (Vorname, Nachname, E-Mail, Passwort). 
+- Die Vergabe oder der Entzug von Admin-Rechten erfolgt nicht im Anlageformular, sondern direkt in der **Benutzerliste** über einen Toggle-Schalter. 
+- In der Benutzerliste kann jeder Benutzer über das Stift-Symbol bearbeitet oder über das Mülleimer-Symbol gelöscht werden.
+- **Wichtig:** Der aktuell angemeldete Benutzer sieht sich selbst in der Liste mit denselben Rechten und Schaltflächen (Admin-Toggle, Bearbeiten, Löschen) wie alle anderen und kann sich somit auch selbst verwalten. Alle Ansichten (Listen, Formulare) sind in der UI zentriert ausgerichtet, um ein konsistentes Design zu gewährleisten.
 
 ### 5.4 Modellverwaltung
 
