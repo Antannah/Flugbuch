@@ -21,8 +21,8 @@ def get_flugbuch(
     if datum:
         query = query.filter(models.Flugeintrag.datum == datum)
         
-    # Order by start time
-    return query.order_by(models.Flugeintrag.startzeit).all()
+    # Order by start time descending (newest first)
+    return query.order_by(models.Flugeintrag.startzeit.desc()).all()
 
 @router.post("", response_model=schemas.FlugeintragOut, status_code=status.HTTP_201_CREATED)
 def create_flugeintrag(eintrag: schemas.FlugeintragCreate, db: Session = Depends(get_db), current_user: models.User = Depends(auth.get_current_user)):
